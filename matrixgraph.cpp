@@ -1,51 +1,69 @@
 #include "matrixgraph.hpp"
+#include <iostream>
+
+bool MatrixGraph::pond(void) noexcept {
+	return m_pond;
+}
+
+bool MatrixGraph::dir (void) noexcept {
+	return m_dir;
+}
 
 bool MatrixGraph::inserirVertice(std::string label) noexcept {
 	return m_stg.put(label);
 }
 
 bool MatrixGraph::removerVertice(id_t idx) noexcept {
+	for (id_t i = 0; i < m_stg.max; i++)
+		this->removerAresta(idx, i),
+		this->removerAresta(i, idx);
 	return m_stg.yank(idx);
 }
 
 bool MatrixGraph::inserirAresta(id_t A, id_t B, weight_t peso) noexcept {
 
-	// TODO
-	assert(!m_pond && !m_dir);
-
 	if (B > m_stg.max || A > m_stg.max)
 		return true;
 
 	// TODO: Generalize
-	if (m_stg[B][A] != 0 && m_stg[A][B] != 0)
+	if (m_stg[B][A] != 0)
+		return true;
+
+	if (!m_dir && m_stg[A][B] != 0)
+		return true;
+
+	if (!m_stg.labels[A].first || !m_stg.labels[B].first)
 		return true;
 
 	m_stg[B][A] = peso;
-	m_stg[A][B] = peso;
+
+	if (!m_dir)
+		m_stg[A][B] = peso;
 
 	return false;
 }
 
 bool MatrixGraph::removerAresta (id_t A, id_t B) noexcept {
 
-	// TODO
-	assert(!m_pond && !m_dir);
-
 	if (B > m_stg.max || A > m_stg.max)
 		return true;
 
 	// TODO: Generalize
-	if (m_stg[B][A] == 0 || m_stg[A][B] == 0)
+	if (m_stg[B][A] == 0)
+		return true;
+
+	if (!m_dir && m_stg[A][B] == 0)
 		return true;
 
 	m_stg[B][A] = 0;
-	m_stg[A][B] = 0;
+	if (!m_dir)
+		m_stg[A][B] = 0;
 
 	return false;
 }
 
 std::optional<std::string>
-MatrixGraph::labelVertice(id_t idx) const noexcept {
+MatrixGraph::labelVertice(id_t idx) noexcept {
 
 	if (idx > m_stg.labels.size() || m_stg.labels[idx].first == false)
 		return std::nullopt;
@@ -53,7 +71,7 @@ MatrixGraph::labelVertice(id_t idx) const noexcept {
 		return m_stg.labels[idx].second;
 }
 
-bool MatrixGraph::existeAresta(id_t A, id_t B) const noexcept {
+bool MatrixGraph::existeAresta(id_t A, id_t B) noexcept {
 
 	if (B > m_stg.max || A > m_stg.max)
 		return false;
@@ -66,7 +84,7 @@ bool MatrixGraph::existeAresta(id_t A, id_t B) const noexcept {
 }
 
 std::optional<weight_t>
-MatrixGraph::pesoAresta(id_t A, id_t B) const noexcept {
+MatrixGraph::pesoAresta(id_t A, id_t B) noexcept {
 
 	if (B > m_stg.max || A > m_stg.max)
 		return std::nullopt;
@@ -78,12 +96,46 @@ MatrixGraph::pesoAresta(id_t A, id_t B) const noexcept {
 }
 
 std::optional<std::vector<id_t>>
-MatrixGraph::retornarVizinhos(id_t idx) const noexcept {
+MatrixGraph::retornarVizinhos(id_t idx) noexcept {
 
-	// TODO
-	return std::nullopt;
+	if (idx > m_stg.max)
+		return std::nullopt;
+
+	if (m_stg.labels[idx].first == false)
+		return std::nullopt;
+
+	auto base = m_stg[idx];
+
+	std::vector<id_t> res;
+
+	// TODO: Generalize
+	for (id_t j = 0; j < m_stg.max; j++)
+		if (base[j] != 0)
+			res.push_back(j);
+
+	return res;
 }
 
-void MatrixGraph::imprimeGrafo(void) const noexcept {
+void MatrixGraph::imprimeGrafo(void) noexcept {
+
+	std::printf("    ");
+
+	for (auto lbl : m_stg.labels)
+		if (lbl.first)
+			std::printf("%-4s", lbl.second.c_str());
+
+	std::puts("");
+
+	for (id_t y = 0; y < m_stg.max; y++) {
+		if (m_stg.labels[y].first) {
+			std::printf("%-4s", m_stg.labels[y].second.c_str());
+			for (id_t x = 0; x < m_stg.max; x++) {
+				if (!m_stg.labels[x].first) continue;
+				auto num = m_stg[y][x];
+				std::printf("%-4i", num);
+			}
+			std::puts("");
+		}
+	}
 
 }

@@ -2,7 +2,10 @@
 #include <iostream>
 #include <vector>
 
-#include "graph.hpp"
+//#include "graph.hpp"
+#include "igraph.hpp"
+#include "matrixgraph.hpp"
+#include "listgraphwrapper.hpp"
 
 using namespace std;
 
@@ -29,9 +32,9 @@ using namespace std;
 
 
 
+void test();
 
-
-void menu(Grafo *grafo) {// recebe ponteiro para o grafo
+void menu(IGraph *grafo) {// recebe ponteiro para o grafo
     while(true) {
 
         cout << "O que desejas?\n\n";
@@ -53,7 +56,7 @@ void menu(Grafo *grafo) {// recebe ponteiro para o grafo
                 cout << "Digite um label para seu novo vértice\n";
                 string label;
                 cin >> label;
-                if(!(grafo->inserirVertice(label))) { cout << "Algo deu errado, tente novamente mais tarde\n"; }
+                if((grafo->inserirVertice(label))) { cout << "Algo deu errado, tente novamente mais tarde\n"; }
                 break;
             }
 
@@ -69,7 +72,7 @@ void menu(Grafo *grafo) {// recebe ponteiro para o grafo
                     cin >> c;
                     cin >> indice;
                 }
-                if(!(grafo->removerVertice(indice))) { cout << "Vertice não encontrado\n"; }
+                if((grafo->removerVertice(indice))) { cout << "Vertice não encontrado\n"; }
                 break;
             }
 
@@ -93,7 +96,7 @@ void menu(Grafo *grafo) {// recebe ponteiro para o grafo
                     cin >> c;
                     cin >> destino;
                 }
-                if(grafo->ponderado) {
+                if(grafo->pond()) {
                     cout << "\nPeso da Aresta: ";
                     cin >> peso;
                     while(cin.fail()) {
@@ -104,7 +107,7 @@ void menu(Grafo *grafo) {// recebe ponteiro para o grafo
                         cin >> peso;
                     }
                 }
-                if(!grafo->inserirAresta(origem, destino, peso)) { cout << "Algo deu errado, tente novamente\n"; }
+                if(grafo->inserirAresta(origem, destino, peso)) { cout << "Algo deu errado, tente novamente\n"; }
                 break;
             }
 
@@ -128,7 +131,7 @@ void menu(Grafo *grafo) {// recebe ponteiro para o grafo
                     cin >> c;
                     cin >> destino;
                 }
-                if(!grafo->removerAresta(origem, destino)) { cout << "Algo deu errado, tente novamente\n"; }
+                if(grafo->removerAresta(origem, destino)) { cout << "Algo deu errado, tente novamente\n"; }
                 break;
             }
 
@@ -143,7 +146,12 @@ void menu(Grafo *grafo) {// recebe ponteiro para o grafo
 					cin >> c;
 					cin >> index;
 				}
-                cout << grafo->labelVertice(index) << endl;
+				auto label = grafo->labelVertice(index);
+				if (label)
+					cout << *label << endl;
+				else
+					cerr << "Erro ao ler label" << endl;
+
                 break;
             }
 
@@ -191,7 +199,12 @@ void menu(Grafo *grafo) {// recebe ponteiro para o grafo
                     cin >> c;
                     cin >> destino;
                 }
-                cout << grafo->pesoAresta(origem, destino) << "\n";
+                auto peso = grafo->pesoAresta(origem, destino);
+				if (peso)
+					cout << *peso << "\n";
+				else
+					cerr << "Erro ao ler peso" << endl;
+
 				break;
             }
 
@@ -206,10 +219,12 @@ void menu(Grafo *grafo) {// recebe ponteiro para o grafo
                     cin >> c;
                     cin >> vertice;
                 }
-                vector<int> vizinhos = grafo->retornarVizinhos(vertice);
-                for(int vizinho: vizinhos) {
+                auto vizinhos = grafo->retornarVizinhos(vertice);
+				if (vizinhos) for(id_t vizinho: *vizinhos) {
                     cout << vizinho << "\n";
-                }
+                } else {
+					cerr << "Erro ao ler vizinhos" << endl;
+				}
 				break;
             }
 
@@ -237,8 +252,23 @@ int main() {
 //Coleta especificações do Grafo
     bool direcionado;
     bool ponderado;
+	bool matrix;
 
     cout << "Bem vindo ao Criador de Grafos\n";
+
+	cout << "\n\nEscolha o tipo de grafo que deseja criar:\n";
+	cout << " 0. Lista de referência\n";
+	cout << " 1. Matriz de Adjacência\n";
+
+	cin >> matrix;
+	while (cin.fail()) {
+		cout << "Digite apenas 0 ou 1\n";
+		cin.clear();
+		string c;
+		cin >> c;
+		cin >> matrix;
+	}
+
     cout << "\n\nEscolha o tipo de grafo que deseja criar:\n";
     cout << "  0. Grafo Não Direcionado\n";
     cout << "  1. Grafo Direcionado\n";
@@ -265,16 +295,17 @@ int main() {
     }
 
 //Cria o Grafo
-    Grafo *grafo = new Grafo;
-    grafo->direcionado = direcionado;
-    grafo->ponderado = ponderado;
 
-    cout << " Grafo Criado\n";
+	IGraph* grafo;
 
-//    system("cls");
-    menu(grafo);//passa o endereço do grafo
+	if (matrix)
+		grafo = new MatrixGraph(ponderado, direcionado);
+	else
+		grafo = new ListGraphWrapper(ponderado, direcionado);
 
+	system("clear");
+	cout << " Grafo Criado\n";
 
-
+	menu(grafo);
 
 }

@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 
+#include "igraph.hpp"
+
 struct Vertice {
 
     std::string label;
@@ -130,35 +132,6 @@ struct Grafo{
     }
 
     void imprimeGrafo() {
-        try{ // matriz de adjacência
-            std::cout << "matriz de adjacência\n";
-            for(size_t i = 0; i < this->verticesCont; i++) { // columns header
-                std::cout << "\t" << i << ": " << this->vertices.at(i).label;
-            }
-
-
-            for(size_t i = 0; i < this->verticesCont; i++) { // Vertice dono das arestas
-                std::cout << "\n" << i << ": " << this->vertices.at(i).label;
-
-
-                for(size_t  k = 0; k < this->verticesCont; k++) { // Vertice procurado
-                    int peso = 0;
-                    for(size_t  j = 0; j < this->vertices.at(i).arestasCont; j++){ // Arestas do vétice dono das arestas
-                        if(this->vertices.at(i).arestas.at(j).destino->label == this->vertices.at(k).label){
-
-                            if(this->ponderado) {peso = this->vertices.at(i).arestas.at(j).peso; } else { peso = 1; }
-                            break;
-                        }
-                    }
-                    std::cout << "\t" << peso;
-                }
-
-            }
-            std::cout << "\n";
-        }catch (...) {
-            std::cout << "ERROR: erro na geração da matriz de adjacência\n";
-        }
-
 
         try{ // Lista
             std::cout << "\nLista\n";
@@ -220,7 +193,7 @@ struct Grafo{
         }
     }
 
-    int pesoAresta(size_t origem, size_t destino){
+    int pesoAresta(size_t origem, size_t destino) {
 
         try {
             if(this->existeAresta(origem, destino)){
@@ -234,8 +207,8 @@ struct Grafo{
         }
     }
 
-    std::vector<int> retornarVizinhos(size_t vertice) {
-        std::vector<int> vizinhos;
+    std::vector<id_t> retornarVizinhos(size_t vertice) {
+        std::vector<id_t> vizinhos;
         std::vector<Vertice*> ptrVizinhos = this->vertices.at(vertice).retornarVizinhos();
         for(Vertice* vertice: ptrVizinhos) {
             for(size_t i = 0; i < this->verticesCont; i++) {

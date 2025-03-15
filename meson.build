@@ -12,6 +12,8 @@ project(
 
 
 executable('graphs',
-           'main.cpp'
+           'main.cpp',
+           'matrixgraph.cpp',
+           'listgraphwrapper.cpp'
 )
 
