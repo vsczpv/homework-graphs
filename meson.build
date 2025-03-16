@@ -1,3 +1,4 @@
+
 project(
     'graphs',
     'cpp',
@@ -5,11 +6,10 @@ project(
     default_options : [
         'buildtype=debug',
         'optimization=0',
-        'cpp_std=c++17'
+        'cpp_std=c++17',
     ],
     meson_version: '>= 0.60.0',
 )
-
 
 executable('graphs',
            'main.cpp',

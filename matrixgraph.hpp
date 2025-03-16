@@ -2,6 +2,7 @@
 #define MATRIX_GRAPH_HPP_
 
 #include <cassert>
+#include <cstring>
 #include <utility>
 
 #include "igraph.hpp"
@@ -55,9 +56,13 @@ struct MatrixGraphStorage {
 		return std::nullopt;
 	};
 	MatrixGraphStorage(int max) {
-		this->M      = new int[max * max];
+		this->M      = new weight_t[max * max];
 		this->max    = max;
 		this->labels = std::vector<pair<bool, std::string>>(max);
+		bzero(this->M, max*max*sizeof(weight_t));
+	}
+	~MatrixGraphStorage() {
+		delete[] this->M;
 	}
 };
 
@@ -73,7 +78,6 @@ public:
 		: m_stg (MATRIX_MAX),
 		  m_pond(pond),
 		  m_dir (dir)
-
 	{}
 
 	bool inserirVertice(std::string label)                 noexcept override;
@@ -93,6 +97,7 @@ public:
 
 	bool pond(void) noexcept override;
 	bool dir (void) noexcept override;
+
 };
 
 #endif // MATRIX_GRAPH_HPP_

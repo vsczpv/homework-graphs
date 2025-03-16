@@ -2,37 +2,11 @@
 #include <iostream>
 #include <vector>
 
-//#include "graph.hpp"
 #include "igraph.hpp"
 #include "matrixgraph.hpp"
 #include "listgraphwrapper.hpp"
 
 using namespace std;
-
-
-
-
-
-//bool inserirVertice(string label);
-//bool removerVertice(int indice);
-//bool inserirAresta(int origem, int destino, int peso = 1);
-//bool removerAresta(int origem, int destino);
-//string labelVertice(int indice);
-//bool existeAresta(int origem, int destino);
-//float pesoAresta(int origem, int destino);
-//vector<int> retornarVizinhos(int vertice);
-//void imprimeGrafo();
-
-//Remover as arestas as quais tem o vértice removido como destino
-
-
-
-
-
-
-
-
-void test();
 
 void menu(IGraph *grafo) {// recebe ponteiro para o grafo
     while(true) {
@@ -308,4 +282,7 @@ int main() {
 
 	menu(grafo);
 
+	delete grafo;
+
+	return EXIT_SUCCESS;
 }

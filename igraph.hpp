@@ -33,6 +33,8 @@ public:
 
 	virtual bool pond(void) noexcept = 0;
 	virtual bool dir (void) noexcept = 0;
+
+	virtual ~IGraph() = default;
 };
 
 #endif // IGRAPH_HPP_
