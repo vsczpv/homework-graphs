@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #include "igraph.hpp"
 #include "matrixgraph.hpp"
@@ -8,7 +9,7 @@
 
 using namespace std;
 
-void menu(IGraph *grafo) {// recebe ponteiro para o grafo
+void menu(IGraph& grafo) {// recebe ponteiro para o grafo
     while(true) {
 
         cout << "O que desejas?\n\n";
@@ -30,7 +31,7 @@ void menu(IGraph *grafo) {// recebe ponteiro para o grafo
                 cout << "Digite um label para seu novo vértice\n";
                 string label;
                 cin >> label;
-                if((grafo->inserirVertice(label))) { cout << "Algo deu errado, tente novamente mais tarde\n"; }
+                if(grafo.inserirVertice(label)) { cout << "Algo deu errado, tente novamente mais tarde\n"; }
                 break;
             }
 
@@ -46,7 +47,7 @@ void menu(IGraph *grafo) {// recebe ponteiro para o grafo
                     cin >> c;
                     cin >> indice;
                 }
-                if((grafo->removerVertice(indice))) { cout << "Vertice não encontrado\n"; }
+                if(grafo.removerVertice(indice)) { cout << "Vertice não encontrado\n"; }
                 break;
             }
 
@@ -70,7 +71,7 @@ void menu(IGraph *grafo) {// recebe ponteiro para o grafo
                     cin >> c;
                     cin >> destino;
                 }
-                if(grafo->pond()) {
+                if(grafo.pond()) {
                     cout << "\nPeso da Aresta: ";
                     cin >> peso;
                     while(cin.fail()) {
@@ -81,7 +82,7 @@ void menu(IGraph *grafo) {// recebe ponteiro para o grafo
                         cin >> peso;
                     }
                 }
-                if(grafo->inserirAresta(origem, destino, peso)) { cout << "Algo deu errado, tente novamente\n"; }
+                if(grafo.inserirAresta(origem, destino, peso)) { cout << "Algo deu errado, tente novamente\n"; }
                 break;
             }
 
@@ -105,7 +106,7 @@ void menu(IGraph *grafo) {// recebe ponteiro para o grafo
                     cin >> c;
                     cin >> destino;
                 }
-                if(grafo->removerAresta(origem, destino)) { cout << "Algo deu errado, tente novamente\n"; }
+                if(grafo.removerAresta(origem, destino)) { cout << "Algo deu errado, tente novamente\n"; }
                 break;
             }
 
@@ -120,7 +121,7 @@ void menu(IGraph *grafo) {// recebe ponteiro para o grafo
 					cin >> c;
 					cin >> index;
 				}
-				auto label = grafo->labelVertice(index);
+				auto label = grafo.labelVertice(index);
 				if (label)
 					cout << *label << endl;
 				else
@@ -149,7 +150,7 @@ void menu(IGraph *grafo) {// recebe ponteiro para o grafo
                     cin >> c;
                     cin >> destino;
                 }
-                cout << grafo->existeAresta(origem, destino) << "\n";
+                cout << grafo.existeAresta(origem, destino) << "\n";
 				break;
             }
 
@@ -173,7 +174,7 @@ void menu(IGraph *grafo) {// recebe ponteiro para o grafo
                     cin >> c;
                     cin >> destino;
                 }
-                auto peso = grafo->pesoAresta(origem, destino);
+                auto peso = grafo.pesoAresta(origem, destino);
 				if (peso)
 					cout << *peso << "\n";
 				else
@@ -193,7 +194,7 @@ void menu(IGraph *grafo) {// recebe ponteiro para o grafo
                     cin >> c;
                     cin >> vertice;
                 }
-                auto vizinhos = grafo->retornarVizinhos(vertice);
+                auto vizinhos = grafo.retornarVizinhos(vertice);
 				if (vizinhos) for(id_t vizinho: *vizinhos) {
                     cout << vizinho << "\n";
                 } else {
@@ -203,7 +204,7 @@ void menu(IGraph *grafo) {// recebe ponteiro para o grafo
             }
 
             case 9: {
-                grafo->imprimeGrafo();
+                grafo.imprimeGrafo();
                 break;
             }
 
@@ -270,19 +271,18 @@ int main() {
 
 //Cria o Grafo
 
-	IGraph* grafo;
+	std::unique_ptr <IGraph> grafo;
 
 	if (matrix)
-		grafo = new MatrixGraph(ponderado, direcionado);
+		grafo = std::make_unique<MatrixGraph>(ponderado, direcionado);
 	else
-		grafo = new ListGraphWrapper(ponderado, direcionado);
+		grafo = std::make_unique<ListGraphWrapper>(ponderado, direcionado);
 
 	system("clear");
+
 	cout << " Grafo Criado\n";
 
-	menu(grafo);
-
-	delete grafo;
+	menu(*grafo);
 
 	return EXIT_SUCCESS;
 }
