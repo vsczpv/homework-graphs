@@ -104,13 +104,11 @@ MatrixGraph::retornarVizinhos(id_t idx) noexcept {
 	if (m_stg.labels[idx].first == false)
 		return std::nullopt;
 
-	auto base = m_stg[idx];
-
 	std::vector<id_t> res;
 
 	// TODO: Generalize
 	for (id_t j = 0; j < m_stg.max; j++)
-		if (base[j] != 0)
+		if (m_stg[j][idx] != 0)
 			res.push_back(j);
 
 	return res;
