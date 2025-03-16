@@ -11,9 +11,12 @@ project(
     meson_version: '>= 0.60.0',
 )
 
+ncurses_dep = dependency('ncurses', required: host_machine.system() != 'windows')
+
 executable('graphs',
            'main.cpp',
            'matrixgraph.cpp',
-           'listgraphwrapper.cpp'
+           'listgraphwrapper.cpp',
+            dependencies: [ncurses_dep]
 )
 
