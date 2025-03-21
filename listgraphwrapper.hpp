@@ -1,7 +1,7 @@
 #ifndef LIST_GRAPH_WRAPPER_HPP_
 #define LIST_GRAPH_WRAPPER_HPP_
 
-#include "graph.hpp"
+#include "listgraph.hpp"
 #include "igraph.hpp"
 
 // TODO: Not use a wrapper

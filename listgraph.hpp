@@ -119,6 +119,9 @@ struct Grafo{
 
     bool removerVertice(size_t indice) {
         try {
+			if (indice >= this->verticesCont)
+				return false;
+
             for(size_t j = 0; j < this->verticesCont; j++) { // remove arestas que apontam para ele
                 this->removerAresta(j, indice);
             }
@@ -136,7 +139,7 @@ struct Grafo{
         try{ // Lista
             std::cout << "\nLista\n";
             for(size_t  i = 0; i < this->verticesCont; i++) {
-                std::cout << this->vertices.at(i).label << " ->  |";
+                std::cout << i << "\t" << this->vertices.at(i).label << " ->  |";
                 for(size_t  j = 0; j < this->vertices.at(i).arestasCont; j++) {
                     std::cout << " " << this->vertices.at(i).arestas.at(j).destino->label;
                     if(this->ponderado) { std::cout << ": " << this->vertices.at(i).arestas.at(j).peso << " |"; } else { std::cout << " |"; }

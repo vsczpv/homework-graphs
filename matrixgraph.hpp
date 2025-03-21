@@ -45,6 +45,7 @@ struct MatrixGraphStorage {
 			{
 				this->labels[i].first  = true,
 				this->labels[i].second = label;
+
 				return false;
 			}
 		return true;

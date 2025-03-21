@@ -132,7 +132,7 @@ void MatrixGraph::imprimeGrafo(void) noexcept {
 				auto num = m_stg[y][x];
 				std::printf("%-4i", num);
 			}
-			std::puts("");
+			std::printf("\t\tID %i\n", y);
 		}
 	}
 
