@@ -1,7 +1,9 @@
 
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <memory>
+#include <fstream>
 
 #include "vin.hpp"
 
@@ -15,17 +17,17 @@ using namespace std;
 void menu(IGraph& grafo) {
     while(true) {
 
-        cout << "O que desejas?\n\n"
-                "   1. Inserir Vértice\n"
-			    "   2. Remover Vértice\n"
-				"   3. Inserir Aresta\n"
-				"   4. Remover Aresta\n"
-				"   5. Ver Label do Vértice\n"
-				"   6. Ver se Existe Aresta\n"
-				"   7. Ver Peso da Aresta\n"
-				"   8. Retornar Vizinhos do Vértice\n"
-				"   9. Imprimir Grafo\n"
-				"  10. Limpar Tela\n\n: "
+		cout << "O que desejas?\n\n"
+		        "   1. Inserir Vértice\n"
+		        "   2. Remover Vértice\n"
+		        "   3. Inserir Aresta\n"
+		        "   4. Remover Aresta\n"
+		        "   5. Ver Label do Vértice\n"
+		        "   6. Ver se Existe Aresta\n"
+		        "   7. Ver Peso da Aresta\n"
+		        "   8. Retornar Vizinhos do Vértice\n"
+		        "   9. Imprimir Grafo\n"
+		        "  10. Limpar Tela\n\n: "
 		        "   0. Sair\n";
 
 		int opcao = vin::ask<int>("=> ");
@@ -136,6 +138,31 @@ void menu(IGraph& grafo) {
     }
 }
 
+void dot(IGraph& graph) {
+	std::stringstream graphtext;
+
+	graphtext << "digraph out {";
+
+	graphtext << "a -> b\n"
+	          << "b -> c\n"
+	          << "c -> a\n"
+			  << "b -> d\n"
+			  << "b -> c\n";
+
+	graphtext << "}";
+
+	std::fstream out;
+	out.open("out.txt", std::fstream::out | std::fstream::trunc);
+
+	out << graphtext.str();
+
+	out.flush();
+	out.close();
+
+	// TODO: Make this not suck
+	system("dot -Tpng out.txt > out.png");
+}
+
 int main() {
 
 	vin::compat_prologue();
@@ -156,9 +183,9 @@ int main() {
 
 	auto direcionado = vin::ask<bool>("=> ");
 
-    std::cout << "\n\nEscolha o tipo de grafo que deseja criar:\n\n"
-              << "  0. Grafo Não Ponderado\n"
-              << "  1. Grafo Ponderado\n" << std::endl;
+	std::cout << "\n\nEscolha o tipo de grafo que deseja criar:\n\n"
+	          << "  0. Grafo Não Ponderado\n"
+	          << "  1. Grafo Ponderado\n" << std::endl;
 
 	auto ponderado = vin::ask<bool>("=> ");
 

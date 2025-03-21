@@ -17,7 +17,15 @@ bool MatrixGraph::removerVertice(id_t idx) noexcept {
 	for (id_t i = 0; i < m_stg.max; i++)
 		this->removerAresta(idx, i),
 		this->removerAresta(i, idx);
-	return m_stg.yank(idx);
+
+	bool err = m_stg.yank(idx);
+
+	if (err)
+		return true;
+
+	m_node_ct--;
+
+	return false;
 }
 
 bool MatrixGraph::inserirAresta(id_t A, id_t B, weight_t peso) noexcept {
@@ -39,6 +47,8 @@ bool MatrixGraph::inserirAresta(id_t A, id_t B, weight_t peso) noexcept {
 
 	if (!m_dir)
 		m_stg[A][B] = peso;
+
+	m_node_ct++;
 
 	return false;
 }
@@ -136,4 +146,9 @@ void MatrixGraph::imprimeGrafo(void) noexcept {
 		}
 	}
 
+}
+
+size_t MatrixGraph::node_ct() noexcept
+{
+	return m_node_ct;
 }

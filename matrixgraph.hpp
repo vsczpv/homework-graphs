@@ -71,6 +71,7 @@ private:
 
 	MatrixGraphStorage m_stg;
 	bool m_pond, m_dir;
+	size_t m_node_ct = 0;
 
 public:
 
@@ -79,6 +80,8 @@ public:
 		  m_pond(pond),
 		  m_dir (dir)
 	{}
+
+	/* IGraph */
 
 	bool inserirVertice(std::string label)                 noexcept override;
 	bool removerVertice(id_t idx)                          noexcept override;
@@ -97,6 +100,10 @@ public:
 
 	bool pond(void) noexcept override;
 	bool dir (void) noexcept override;
+
+	/* MatrixGraph */
+
+	size_t node_ct(void) noexcept;
 
 };
 

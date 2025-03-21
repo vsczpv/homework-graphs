@@ -1,0 +1,6 @@
+digraph out {a -> b
+b -> c
+c -> a
+b -> d
+b -> c
+}
