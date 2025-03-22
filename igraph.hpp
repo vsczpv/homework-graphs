@@ -6,7 +6,7 @@
 #include <optional>
 #include <cstdint>
 
-using weight_t = int;
+using weight_t = float;
 using id_t     = uint32_t;
 
 class IGraph {

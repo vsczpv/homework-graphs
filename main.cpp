@@ -50,12 +50,12 @@ void menu(IGraph& grafo) {
             }
 
             case 3: {
-                int peso = 1;
+                weight_t peso = 1;
                 int origem  = vin::ask<int>("Index do vértice origem: ");
                 int destino = vin::ask<int>("Index do vértice destino: ");
 
                 if(grafo.pond())
-					peso = vin::ask<int>("Peso da Aresta: ");
+					peso = vin::ask<weight_t>("Peso da Aresta: ");
 
                 if(grafo.inserirAresta(origem, destino, peso)) { cout << "Algo deu errado, tente novamente\n"; }
                 break;
