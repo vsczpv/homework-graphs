@@ -92,7 +92,7 @@ std::optional<std::string> ListGraph::labelVertice(id_t index) {
     try {
         return vertices.at(index).label;
     } catch(...) {
-        return "Index Inválido";
+        return std::nullopt;
     }
 }
 
@@ -120,6 +120,7 @@ std::optional<weight_t> ListGraph::pesoAresta(id_t A, id_t B) {
 }
 
 std::optional<std::vector<id_t>> ListGraph::retornarVizinhos(id_t idx) {
+    if(idx >= verticesCount) return std::nullopt;
     std::vector<id_t> vizinhos;
     std::vector<Vertex*> ptrVizinhos = vertices.at(idx).retornarVizinhos();
     for(Vertex* vertice: ptrVizinhos) {
