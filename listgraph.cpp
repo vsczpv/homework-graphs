@@ -4,16 +4,16 @@
 
         
 
-bool ListGraph::pond(void) {
+bool ListGraph::pond(void) noexcept {
     return m_pond;
 }
 
-bool ListGraph::dir(void) {
+bool ListGraph::dir(void) noexcept {
     return m_dir;
 }
 
 
-bool ListGraph::inserirVertice(std::string label) {
+bool ListGraph::inserirVertice(std::string label) noexcept {
     try{
         Vertex v;
         v.label = label;
@@ -26,7 +26,7 @@ bool ListGraph::inserirVertice(std::string label) {
 }
 
 
-bool ListGraph::removerVertice(id_t indice) {
+bool ListGraph::removerVertice(id_t indice) noexcept {
     try {
         if (indice >= verticesCount)
             return false;
@@ -43,7 +43,7 @@ bool ListGraph::removerVertice(id_t indice) {
     }
 }
 
-void ListGraph::imprimeGrafo() {
+void ListGraph::imprimeGrafo() noexcept {
 
     try{ // Lista
         std::cout << "\nLista\n";
@@ -60,7 +60,7 @@ void ListGraph::imprimeGrafo() {
     }
 }
 
-bool ListGraph::inserirAresta(id_t A, id_t B, weight_t peso = 1) {
+bool ListGraph::inserirAresta(id_t A, id_t B, weight_t peso = 1) noexcept {
     try {
 
         vertices.at(A).inserirAresta(&vertices.at(B), peso);
@@ -74,7 +74,7 @@ bool ListGraph::inserirAresta(id_t A, id_t B, weight_t peso = 1) {
     }
 }
 
-bool ListGraph::removerAresta(id_t A, id_t B) {
+bool ListGraph::removerAresta(id_t A, id_t B) noexcept {
     try {
 
         vertices.at(A).removerAresta(&vertices.at(B));
@@ -88,7 +88,7 @@ bool ListGraph::removerAresta(id_t A, id_t B) {
     }
 }
 
-std::optional<std::string> ListGraph::labelVertice(id_t index) {
+std::optional<std::string> ListGraph::labelVertice(id_t index) noexcept {
     try {
         return vertices.at(index).label;
     } catch(...) {
@@ -96,7 +96,7 @@ std::optional<std::string> ListGraph::labelVertice(id_t index) {
     }
 }
 
-bool ListGraph::existeAresta(id_t A, id_t B) {
+bool ListGraph::existeAresta(id_t A, id_t B) noexcept {
     try {
         return vertices.at(A).existeAresta(&vertices.at(B));
     } catch(...) {
@@ -105,7 +105,7 @@ bool ListGraph::existeAresta(id_t A, id_t B) {
     }
 }
 
-std::optional<weight_t> ListGraph::pesoAresta(id_t A, id_t B) {
+std::optional<weight_t> ListGraph::pesoAresta(id_t A, id_t B) noexcept {
 
     try {
         if(existeAresta(A, B)){
@@ -119,7 +119,7 @@ std::optional<weight_t> ListGraph::pesoAresta(id_t A, id_t B) {
     }
 }
 
-std::optional<std::vector<id_t>> ListGraph::retornarVizinhos(id_t idx) {
+std::optional<std::vector<id_t>> ListGraph::retornarVizinhos(id_t idx) noexcept {
     if(idx >= verticesCount) return std::nullopt;
     std::vector<id_t> vizinhos;
     std::vector<Vertex*> ptrVizinhos = vertices.at(idx).retornarVizinhos();
