@@ -17,7 +17,7 @@ bool ListGraph::inserirVertice(std::string label) {
     try{
         Vertex v;
         v.label = label;
-        this->vertices.push_back(v);
+        vertices.push_back(v);
         verticesCount++;
         return true;
     } catch (...) {
@@ -28,14 +28,14 @@ bool ListGraph::inserirVertice(std::string label) {
 
 bool ListGraph::removerVertice(id_t indice) {
     try {
-        if (indice >= this->verticesCount)
+        if (indice >= verticesCount)
             return false;
 
-        for(id_t j = 0; j < this->verticesCount; j++) { // remove arestas que apontam para ele
-            this->removerAresta(j, indice);
+        for(id_t j = 0; j < verticesCount; j++) { // remove arestas que apontam para ele
+            removerAresta(j, indice);
         }
-        this->vertices.erase(this->vertices.cbegin() + indice); // remove a vertice
-        this->verticesCount--;
+        vertices.erase(vertices.cbegin() + indice); // remove a vertice
+        verticesCount--;
         return true;
 
     } catch(...) {
@@ -47,11 +47,11 @@ void ListGraph::imprimeGrafo() {
 
     try{ // Lista
         std::cout << "\nLista\n";
-        for(id_t  i = 0; i < this->verticesCount; i++) {
-            std::cout << i << "\t" << this->vertices.at(i).label << " ->  |";
-            for(id_t  j = 0; j < this->vertices.at(i).arestasCount; j++) {
-                std::cout << " " << this->vertices.at(i).arestas.at(j).destino->label;
-                if(this->m_pond) { std::cout << ": " << this->vertices.at(i).arestas.at(j).weight << " |"; } else { std::cout << " |"; }
+        for(id_t  i = 0; i < verticesCount; i++) {
+            std::cout << i << "\t" << vertices.at(i).label << " ->  |";
+            for(id_t  j = 0; j < vertices.at(i).arestasCount; j++) {
+                std::cout << " " << vertices.at(i).arestas.at(j).destino->label;
+                if(m_pond) { std::cout << ": " << vertices.at(i).arestas.at(j).weight << " |"; } else { std::cout << " |"; }
             }
             std::cout << "\n";
         }
@@ -63,9 +63,9 @@ void ListGraph::imprimeGrafo() {
 bool ListGraph::inserirAresta(id_t A, id_t B, weight_t peso = 1) {
     try {
 
-        this->vertices.at(A).inserirAresta(&this->vertices.at(B), peso);
-        if(!this->m_dir) {
-            this->vertices.at(B).inserirAresta(&this->vertices.at(A), peso);
+        vertices.at(A).inserirAresta(&vertices.at(B), peso);
+        if(!m_dir) {
+            vertices.at(B).inserirAresta(&vertices.at(A), peso);
         }
         return true;
     } catch(...) {
@@ -77,9 +77,9 @@ bool ListGraph::inserirAresta(id_t A, id_t B, weight_t peso = 1) {
 bool ListGraph::removerAresta(id_t A, id_t B) {
     try {
 
-        this->vertices.at(A).removerAresta(&this->vertices.at(B));
-        if(!this->m_dir) {
-            this->vertices.at(B).removerAresta(&this->vertices.at(A));
+        vertices.at(A).removerAresta(&vertices.at(B));
+        if(!m_dir) {
+            vertices.at(B).removerAresta(&vertices.at(A));
         }
         return true;
     } catch(...) {
@@ -90,7 +90,7 @@ bool ListGraph::removerAresta(id_t A, id_t B) {
 
 std::optional<std::string> ListGraph::labelVertice(id_t index) {
     try {
-        return this->vertices.at(index).label;
+        return vertices.at(index).label;
     } catch(...) {
         return "Index Inválido";
     }
@@ -98,7 +98,7 @@ std::optional<std::string> ListGraph::labelVertice(id_t index) {
 
 bool ListGraph::existeAresta(id_t A, id_t B) {
     try {
-        return this->vertices.at(A).existeAresta(&this->vertices.at(B));
+        return vertices.at(A).existeAresta(&vertices.at(B));
     } catch(...) {
         std::cout << "Solicitação inválida";
         return false;
@@ -108,8 +108,8 @@ bool ListGraph::existeAresta(id_t A, id_t B) {
 std::optional<weight_t> ListGraph::pesoAresta(id_t A, id_t B) {
 
     try {
-        if(this->existeAresta(A, B)){
-            return this->vertices.at(A).pesoAresta(&this->vertices.at(B));
+        if(existeAresta(A, B)){
+            return vertices.at(A).pesoAresta(&vertices.at(B));
         } else {
             return std::nullopt;
         }
@@ -121,10 +121,10 @@ std::optional<weight_t> ListGraph::pesoAresta(id_t A, id_t B) {
 
 std::optional<std::vector<id_t>> ListGraph::retornarVizinhos(id_t idx) {
     std::vector<id_t> vizinhos;
-    std::vector<Vertex*> ptrVizinhos = this->vertices.at(idx).retornarVizinhos();
+    std::vector<Vertex*> ptrVizinhos = vertices.at(idx).retornarVizinhos();
     for(Vertex* vertice: ptrVizinhos) {
-        for(id_t i = 0; i < this->verticesCount; i++) {
-            if(&this->vertices.at(i) == vertice) {
+        for(id_t i = 0; i < verticesCount; i++) {
+            if(&vertices.at(i) == vertice) {
                 vizinhos.push_back(i);
             }
         }
