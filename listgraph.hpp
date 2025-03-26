@@ -1,7 +1,7 @@
 #include "listgraphwrapper.hpp"
 
-#ifndef GRAPH_HPP_
-#define GRAPH_HPP_
+#ifndef LIST_GRAPH_HPP_
+#define LIST_GRAPH_HPP_
 
 #include <iostream>
 #include <vector>
@@ -10,7 +10,7 @@
 
 
 
-class ListGraph{
+class ListGraph : public IGraph {
 
 private:
     struct Vertex {
@@ -118,4 +118,4 @@ public:
 
 };
 
-#endif // GRAPH_HPP_
+#endif // LIST_GRAPH_HPP_
