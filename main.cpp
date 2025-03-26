@@ -7,7 +7,7 @@
 
 #include "igraph.hpp"
 #include "matrixgraph.hpp"
-#include "listgraphwrapper.hpp"
+#include "listgraph.hpp"
 
 using namespace std;
 
