@@ -85,14 +85,14 @@ private:
     };
 
         std::vector<Vertex> vertices;
-        id_t verticesCont;
+        id_t verticesCount;
         bool m_dir, m_pond;
 
 public:
 
         ListGraph(bool pond, bool dir)
             : vertices  (),
-            verticesCont(0),
+            verticesCount(0),
             m_dir       (dir),
             m_pond      (pond)
         {}
