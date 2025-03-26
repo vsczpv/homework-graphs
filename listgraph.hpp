@@ -10,7 +10,7 @@
 
 
 
-class Graph{
+class ListGraph{
 
 private:
     struct Vertex {
@@ -90,7 +90,7 @@ private:
 
 public:
 
-        Graph(bool pond, bool dir)
+        ListGraph(bool pond, bool dir)
             : vertices  (),
             verticesCont(0),
             m_dir       (dir),
