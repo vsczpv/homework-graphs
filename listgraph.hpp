@@ -10,46 +10,46 @@
 
 
 
-class Grafo{
+class Graph{
 
 private:
-    struct Vertice {
+    struct Vertex {
 
         std::string label;
 
-        struct Aresta {
-            Vertice *origem;
-            Vertice *destino;
-            int peso;
+        struct Edge {
+            Vertex *origin;
+            Vertex *destination;
+            int weight;
         };
 
-        std::vector<Aresta> arestas;
-        id_t arestasCont=0;
+        std::vector<Edge> edges;
+        id_t edgesCount=0;
 
-        bool inserirAresta(Vertice *destino, int peso = 1) {
-            Aresta a;
-            a.origem = this;
-            a.destino = destino;
-            a.peso = peso;
-            this->arestas.push_back(a);
-            this->arestasCont++;
+        bool inserirAresta(Vertex *destination, int weight = 1) {
+            Edge a;
+            a.origin = this;
+            a.destination = destination;
+            a.weight = weight;
+            this->edges.push_back(a);
+            this->edgesCount++;
             return true;
         }
-        bool removerAresta(Vertice *destino) {
-            for(id_t i = 0; i < this->arestasCont; i++) {
-                if(this->arestas.at(i).destino == destino) {
+        bool removerAresta(Vertex *destination) {
+            for(id_t i = 0; i < this->edgesCount; i++) {
+                if(this->edges.at(i).destination == destination) {
     //              this->arestas.erase(arestas.begin() + i);
-                    this->arestas.erase(arestas.cbegin() + static_cast<signed>(i));//(signed) i);
-                    arestasCont--;
+                    this->edges.erase(edges.cbegin() + static_cast<signed>(i));//(signed) i);
+                    edgesCount--;
                     return true;
                 }
             }
             return false;
         }
 
-        bool existeAresta(Vertice *destino) {
-            for(id_t i = 0; i < this->arestasCont; i++) {
-                if(this->arestas.at(i).destino == destino) {
+        bool existeAresta(Vertex *destination) {
+            for(id_t i = 0; i < this->edgesCount; i++) {
+                if(this->edges.at(i).destination == destination) {
                     return true;
                 }
             }
@@ -57,26 +57,26 @@ private:
         }
 
 
-        int pesoAresta(Vertice *destino) {
-            for(id_t i = 0; i < this->arestasCont; i++) {
-                if(this->arestas.at(i).destino == destino) {
-                    return this->arestas.at(i).peso;
+        int pesoAresta(Vertex *destination) {
+            for(id_t i = 0; i < this->edgesCount; i++) {
+                if(this->edges.at(i).destination == destination) {
+                    return this->edges.at(i).weight;
                 }
             }
             return -1;
         }
 
-        std::vector<Vertice*> retornarVizinhos() {
+        std::vector<Vertex*> retornarVizinhos() {
             try {
-                std::vector<Vertice*> vizinhos;
-                for(id_t i = 0; i < this->arestasCont; i++) { // Coleta o label dos vizinhos
-                    vizinhos.push_back(this->arestas.at(i).destino);
+                std::vector<Vertex*> vizinhos;
+                for(id_t i = 0; i < this->edgesCount; i++) { // Coleta o label dos vizinhos
+                    vizinhos.push_back(this->edges.at(i).destination);
                 }
                 return vizinhos;
 
             } catch(...) {
                 std::cout << "ERRO: no retornarVizinhos\n";
-                std::vector<Vertice*> vizinhos;
+                std::vector<Vertex*> vizinhos;
                 return vizinhos;
             }
         }
@@ -84,13 +84,13 @@ private:
 
     };
 
-        std::vector<Vertice> vertices;
+        std::vector<Vertex> vertices;
         id_t verticesCont;
         bool m_dir, m_pond;
 
 public:
 
-        Grafo(bool pond, bool dir)
+        Graph(bool pond, bool dir)
             : vertices  (),
             verticesCont(0),
             m_dir       (dir),
@@ -187,7 +187,7 @@ public:
                 std::cout << i << "\t" << this->vertices.at(i).label << " ->  |";
                 for(id_t  j = 0; j < this->vertices.at(i).arestasCont; j++) {
                     std::cout << " " << this->vertices.at(i).arestas.at(j).destino->label;
-                    if(this->pond) { std::cout << ": " << this->vertices.at(i).arestas.at(j).peso << " |"; } else { std::cout << " |"; }
+                    if(this->pond) { std::cout << ": " << this->vertices.at(i).arestas.at(j).weight << " |"; } else { std::cout << " |"; }
                 }
                 std::cout << "\n";
             }
@@ -196,12 +196,12 @@ public:
         }
     }
 
-    bool inserirAresta(id_t origem, id_t destino, int peso = 1) {
+    bool inserirAresta(id_t origem, id_t destino, int weight = 1) {
         try {
 
-            this->vertices.at(origem).inserirAresta(&this->vertices.at(destino), peso);
+            this->vertices.at(origem).inserirAresta(&this->vertices.at(destino), weight);
             if(!this->dir) {
-                this->vertices.at(destino).inserirAresta(&this->vertices.at(origem), peso);
+                this->vertices.at(destino).inserirAresta(&this->vertices.at(origem), weight);
             }
             return true;
         } catch(...) {
