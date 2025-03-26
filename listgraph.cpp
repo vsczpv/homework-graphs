@@ -60,12 +60,12 @@ void ListGraph::imprimeGrafo() {
     }
 }
 
-bool ListGraph::inserirAresta(id_t origem, id_t destino, int weight = 1) {
+bool ListGraph::inserirAresta(id_t A, id_t B, weight_t peso = 1) {
     try {
 
-        this->vertices.at(origem).inserirAresta(&this->vertices.at(destino), weight);
+        this->vertices.at(A).inserirAresta(&this->vertices.at(B), peso);
         if(!this->m_dir) {
-            this->vertices.at(destino).inserirAresta(&this->vertices.at(origem), weight);
+            this->vertices.at(B).inserirAresta(&this->vertices.at(A), peso);
         }
         return true;
     } catch(...) {
@@ -74,12 +74,12 @@ bool ListGraph::inserirAresta(id_t origem, id_t destino, int weight = 1) {
     }
 }
 
-bool ListGraph::removerAresta(id_t origem, id_t destino) {
+bool ListGraph::removerAresta(id_t A, id_t B) {
     try {
 
-        this->vertices.at(origem).removerAresta(&this->vertices.at(destino));
+        this->vertices.at(A).removerAresta(&this->vertices.at(B));
         if(!this->m_dir) {
-            this->vertices.at(destino).removerAresta(&this->vertices.at(origem));
+            this->vertices.at(B).removerAresta(&this->vertices.at(A));
         }
         return true;
     } catch(...) {
@@ -88,7 +88,7 @@ bool ListGraph::removerAresta(id_t origem, id_t destino) {
     }
 }
 
-std::string ListGraph::labelVertice(id_t index) {
+std::optional<std::string> ListGraph::labelVertice(id_t index) {
     try {
         return this->vertices.at(index).label;
     } catch(...) {
@@ -96,32 +96,32 @@ std::string ListGraph::labelVertice(id_t index) {
     }
 }
 
-bool ListGraph::existeAresta(id_t origem, id_t destino) {
+bool ListGraph::existeAresta(id_t A, id_t B) {
     try {
-        return this->vertices.at(origem).existeAresta(&this->vertices.at(destino));
+        return this->vertices.at(A).existeAresta(&this->vertices.at(B));
     } catch(...) {
         std::cout << "Solicitação inválida";
         return false;
     }
 }
 
-int ListGraph::pesoAresta(id_t origem, id_t destino) {
+std::optional<weight_t> ListGraph::pesoAresta(id_t A, id_t B) {
 
     try {
-        if(this->existeAresta(origem, destino)){
-            return this->vertices.at(origem).pesoAresta(&this->vertices.at(destino));
+        if(this->existeAresta(A, B)){
+            return this->vertices.at(A).pesoAresta(&this->vertices.at(B));
         } else {
-            return -1;
+            return std::nullopt;
         }
     } catch(...) {
         std::cout << "Solicitação inválida";
-        return -1;
+        return std::nullopt;
     }
 }
 
-std::vector<id_t> ListGraph::retornarVizinhos(id_t vertice) {
+std::optional<std::vector<id_t>> ListGraph::retornarVizinhos(id_t idx) {
     std::vector<id_t> vizinhos;
-    std::vector<Vertex*> ptrVizinhos = this->vertices.at(vertice).retornarVizinhos();
+    std::vector<Vertex*> ptrVizinhos = this->vertices.at(idx).retornarVizinhos();
     for(Vertex* vertice: ptrVizinhos) {
         for(id_t i = 0; i < this->verticesCount; i++) {
             if(&this->vertices.at(i) == vertice) {
