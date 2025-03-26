@@ -1,8 +1,11 @@
+#include "listgraphwrapper.hpp"
+
 #ifndef GRAPH_HPP_
 #define GRAPH_HPP_
 
 #include <iostream>
 #include <vector>
+#include <optional>
 
 #include "igraph.hpp"
 
@@ -17,7 +20,7 @@ struct Vertice {
     };
 
     std::vector<Aresta> arestas;
-    size_t arestasCont=0;
+    id_t arestasCont=0;
 
     bool inserirAresta(Vertice *destino, int peso = 1) {
         Aresta a;
@@ -29,7 +32,7 @@ struct Vertice {
         return true;
     }
     bool removerAresta(Vertice *destino) {
-        for(size_t i = 0; i < this->arestasCont; i++) {
+        for(id_t i = 0; i < this->arestasCont; i++) {
             if(this->arestas.at(i).destino == destino) {
 //              this->arestas.erase(arestas.begin() + i);
 				this->arestas.erase(arestas.cbegin() + static_cast<signed>(i));//(signed) i);
@@ -41,7 +44,7 @@ struct Vertice {
     }
 
     bool existeAresta(Vertice *destino) {
-        for(size_t i = 0; i < this->arestasCont; i++) {
+        for(id_t i = 0; i < this->arestasCont; i++) {
             if(this->arestas.at(i).destino == destino) {
                 return true;
             }
@@ -51,7 +54,7 @@ struct Vertice {
 
 
     int pesoAresta(Vertice *destino) {
-        for(size_t i = 0; i < this->arestasCont; i++) {
+        for(id_t i = 0; i < this->arestasCont; i++) {
             if(this->arestas.at(i).destino == destino) {
                 return this->arestas.at(i).peso;
             }
@@ -62,7 +65,7 @@ struct Vertice {
     std::vector<Vertice*> retornarVizinhos() {
         try {
             std::vector<Vertice*> vizinhos;
-            for(size_t i = 0; i < this->arestasCont; i++) { // Coleta o label dos vizinhos
+            for(id_t i = 0; i < this->arestasCont; i++) { // Coleta o label dos vizinhos
                 vizinhos.push_back(this->arestas.at(i).destino);
             }
             return vizinhos;
@@ -79,10 +82,19 @@ struct Vertice {
 
 struct Grafo{
     std::vector<Vertice> vertices;
-    size_t verticesCont = 0;
-    bool direcionado;
-    bool ponderado;
+    id_t verticesCont = 0;
+    bool dir;
+    bool pond;
 
+    bool pond(void) {
+        return this->pond;
+    }
+
+    bool dir(void) {
+        return this->dir;
+    }
+
+    
     bool inserirVertice(std::string label) {
         try{
             Vertice v;
@@ -97,9 +109,9 @@ struct Grafo{
 
     bool removerVertice(std::string label) {
         try{
-            for(size_t i = 0; i < this->verticesCont; i++) {
+            for(id_t i = 0; i < this->verticesCont; i++) {
                 if(this->vertices.at(i).label == label) { // encontra o vertice
-                    for(size_t j = 0; j < this->verticesCont; j++) { // remove arestas que apontam para ele
+                    for(id_t j = 0; j < this->verticesCont; j++) { // remove arestas que apontam para ele
                         this->removerAresta(j, i);
                     }
 
@@ -117,12 +129,12 @@ struct Grafo{
         return false;
     }
 
-    bool removerVertice(size_t indice) {
+    bool removerVertice(id_t indice) {
         try {
 			if (indice >= this->verticesCont)
 				return false;
 
-            for(size_t j = 0; j < this->verticesCont; j++) { // remove arestas que apontam para ele
+            for(id_t j = 0; j < this->verticesCont; j++) { // remove arestas que apontam para ele
                 this->removerAresta(j, indice);
             }
             this->vertices.erase(this->vertices.cbegin() + indice); // remove a vertice
@@ -138,11 +150,11 @@ struct Grafo{
 
         try{ // Lista
             std::cout << "\nLista\n";
-            for(size_t  i = 0; i < this->verticesCont; i++) {
+            for(id_t  i = 0; i < this->verticesCont; i++) {
                 std::cout << i << "\t" << this->vertices.at(i).label << " ->  |";
-                for(size_t  j = 0; j < this->vertices.at(i).arestasCont; j++) {
+                for(id_t  j = 0; j < this->vertices.at(i).arestasCont; j++) {
                     std::cout << " " << this->vertices.at(i).arestas.at(j).destino->label;
-                    if(this->ponderado) { std::cout << ": " << this->vertices.at(i).arestas.at(j).peso << " |"; } else { std::cout << " |"; }
+                    if(this->pond) { std::cout << ": " << this->vertices.at(i).arestas.at(j).peso << " |"; } else { std::cout << " |"; }
                 }
                 std::cout << "\n";
             }
@@ -151,11 +163,11 @@ struct Grafo{
         }
     }
 
-    bool inserirAresta(size_t origem, size_t destino, int peso = 1) {
+    bool inserirAresta(id_t origem, id_t destino, int peso = 1) {
         try {
 
             this->vertices.at(origem).inserirAresta(&this->vertices.at(destino), peso);
-            if(!this->direcionado) {
+            if(!this->dir) {
                 this->vertices.at(destino).inserirAresta(&this->vertices.at(origem), peso);
             }
             return true;
@@ -165,11 +177,11 @@ struct Grafo{
         }
     }
 
-    bool removerAresta(size_t origem, size_t destino) {
+    bool removerAresta(id_t origem, id_t destino) {
         try {
 
             this->vertices.at(origem).removerAresta(&this->vertices.at(destino));
-            if(!this->direcionado) {
+            if(!this->dir) {
                 this->vertices.at(destino).removerAresta(&this->vertices.at(origem));
             }
             return true;
@@ -179,7 +191,7 @@ struct Grafo{
         }
     }
 
-    std::string labelVertice(size_t index) {
+    std::string labelVertice(id_t index) {
         try {
             return this->vertices.at(index).label;
         } catch(...) {
@@ -187,7 +199,7 @@ struct Grafo{
         }
     }
 
-    bool existeAresta(size_t origem, size_t destino) {
+    bool existeAresta(id_t origem, id_t destino) {
         try {
             return this->vertices.at(origem).existeAresta(&this->vertices.at(destino));
         } catch(...) {
@@ -196,7 +208,7 @@ struct Grafo{
         }
     }
 
-    int pesoAresta(size_t origem, size_t destino) {
+    int pesoAresta(id_t origem, id_t destino) {
 
         try {
             if(this->existeAresta(origem, destino)){
@@ -210,11 +222,11 @@ struct Grafo{
         }
     }
 
-    std::vector<id_t> retornarVizinhos(size_t vertice) {
+    std::vector<id_t> retornarVizinhos(id_t vertice) {
         std::vector<id_t> vizinhos;
         std::vector<Vertice*> ptrVizinhos = this->vertices.at(vertice).retornarVizinhos();
         for(Vertice* vertice: ptrVizinhos) {
-            for(size_t i = 0; i < this->verticesCont; i++) {
+            for(id_t i = 0; i < this->verticesCont; i++) {
                 if(&this->vertices.at(i) == vertice) {
                     vizinhos.push_back(i);
                 }
