@@ -5,7 +5,6 @@
 
 #include <iostream>
 #include <vector>
-#include <optional>
 
 #include "igraph.hpp"
 
@@ -80,11 +79,25 @@ struct Vertice {
 
 };
 
-struct Grafo{
-    std::vector<Vertice> vertices;
-    id_t verticesCont = 0;
-    bool dir;
-    bool pond;
+class Grafo{
+
+private:
+
+        std::vector<Vertice> vertices;
+        id_t verticesCont;
+        bool m_dir, m_pond;
+
+public:
+
+        Grafo(bool pond, bool dir)
+            : vertices  (),
+            verticesCont(0),
+            m_dir       (dir),
+            m_pond      (pond)
+        {}
+
+        
+
 
     bool pond(void) {
         return this->pond;
