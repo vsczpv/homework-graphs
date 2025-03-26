@@ -8,80 +8,81 @@
 
 #include "igraph.hpp"
 
-struct Vertice {
 
-    std::string label;
-
-    struct Aresta {
-        Vertice *origem;
-        Vertice *destino;
-        int peso;
-    };
-
-    std::vector<Aresta> arestas;
-    id_t arestasCont=0;
-
-    bool inserirAresta(Vertice *destino, int peso = 1) {
-        Aresta a;
-        a.origem = this;
-        a.destino = destino;
-        a.peso = peso;
-        this->arestas.push_back(a);
-        this->arestasCont++;
-        return true;
-    }
-    bool removerAresta(Vertice *destino) {
-        for(id_t i = 0; i < this->arestasCont; i++) {
-            if(this->arestas.at(i).destino == destino) {
-//              this->arestas.erase(arestas.begin() + i);
-				this->arestas.erase(arestas.cbegin() + static_cast<signed>(i));//(signed) i);
-                arestasCont--;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool existeAresta(Vertice *destino) {
-        for(id_t i = 0; i < this->arestasCont; i++) {
-            if(this->arestas.at(i).destino == destino) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    int pesoAresta(Vertice *destino) {
-        for(id_t i = 0; i < this->arestasCont; i++) {
-            if(this->arestas.at(i).destino == destino) {
-                return this->arestas.at(i).peso;
-            }
-        }
-        return -1;
-    }
-
-    std::vector<Vertice*> retornarVizinhos() {
-        try {
-            std::vector<Vertice*> vizinhos;
-            for(id_t i = 0; i < this->arestasCont; i++) { // Coleta o label dos vizinhos
-                vizinhos.push_back(this->arestas.at(i).destino);
-            }
-            return vizinhos;
-
-        } catch(...) {
-            std::cout << "ERRO: no retornarVizinhos\n";
-            std::vector<Vertice*> vizinhos;
-            return vizinhos;
-        }
-    }
-
-
-};
 
 class Grafo{
 
 private:
+    struct Vertice {
+
+        std::string label;
+
+        struct Aresta {
+            Vertice *origem;
+            Vertice *destino;
+            int peso;
+        };
+
+        std::vector<Aresta> arestas;
+        id_t arestasCont=0;
+
+        bool inserirAresta(Vertice *destino, int peso = 1) {
+            Aresta a;
+            a.origem = this;
+            a.destino = destino;
+            a.peso = peso;
+            this->arestas.push_back(a);
+            this->arestasCont++;
+            return true;
+        }
+        bool removerAresta(Vertice *destino) {
+            for(id_t i = 0; i < this->arestasCont; i++) {
+                if(this->arestas.at(i).destino == destino) {
+    //              this->arestas.erase(arestas.begin() + i);
+                    this->arestas.erase(arestas.cbegin() + static_cast<signed>(i));//(signed) i);
+                    arestasCont--;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool existeAresta(Vertice *destino) {
+            for(id_t i = 0; i < this->arestasCont; i++) {
+                if(this->arestas.at(i).destino == destino) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        int pesoAresta(Vertice *destino) {
+            for(id_t i = 0; i < this->arestasCont; i++) {
+                if(this->arestas.at(i).destino == destino) {
+                    return this->arestas.at(i).peso;
+                }
+            }
+            return -1;
+        }
+
+        std::vector<Vertice*> retornarVizinhos() {
+            try {
+                std::vector<Vertice*> vizinhos;
+                for(id_t i = 0; i < this->arestasCont; i++) { // Coleta o label dos vizinhos
+                    vizinhos.push_back(this->arestas.at(i).destino);
+                }
+                return vizinhos;
+
+            } catch(...) {
+                std::cout << "ERRO: no retornarVizinhos\n";
+                std::vector<Vertice*> vizinhos;
+                return vizinhos;
+            }
+        }
+
+
+    };
 
         std::vector<Vertice> vertices;
         id_t verticesCont;
@@ -116,7 +117,7 @@ public:
         bool dir (void) noexcept override;
 
 
-        
+
 
     bool pond(void) {
         return this->pond;
