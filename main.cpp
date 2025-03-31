@@ -169,7 +169,7 @@ int main() {
 	if (matrix)
 		grafo = std::make_unique<MatrixGraph>(ponderado, direcionado);
 	else
-		grafo = std::make_unique<ListGraphWrapper>(ponderado, direcionado);
+		grafo = std::make_unique<ListGraph>(ponderado, direcionado);
 
 	std::cout << VT_CLEAR << "Grafo Criado\n";
 
