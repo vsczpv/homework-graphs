@@ -69,7 +69,6 @@ bool ListGraph::inserirAresta(id_t A, id_t B, weight_t peso = 1) noexcept {
         }
         return false;
     } catch(...) {
-        std::cout << "ERRO: Vertices inválidos\n";
         return true;
     }
 }
@@ -83,7 +82,6 @@ bool ListGraph::removerAresta(id_t A, id_t B) noexcept {
         }
         return false;
     } catch(...) {
-        std::cout << "ERRO: Vertices inválidos\n";
         return true;
     }
 }
@@ -100,7 +98,6 @@ bool ListGraph::existeAresta(id_t A, id_t B) noexcept {
     try {
         return vertices.at(A).existeAresta(&vertices.at(B));
     } catch(...) {
-        std::cout << "Solicitação inválida";
         return true;
     }
 }
@@ -114,7 +111,6 @@ std::optional<weight_t> ListGraph::pesoAresta(id_t A, id_t B) noexcept {
             return std::nullopt;
         }
     } catch(...) {
-        std::cout << "Solicitação inválida";
         return std::nullopt;
     }
 }

@@ -74,7 +74,6 @@ private:
                 return vizinhos;
 
             } catch(...) {
-                std::cout << "ERRO: no retornarVizinhos\n";
                 std::vector<Vertex*> vizinhos;
                 return vizinhos;
             }
