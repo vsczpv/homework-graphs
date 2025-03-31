@@ -64,7 +64,7 @@ bool ListGraph::inserirAresta(id_t A, id_t B, weight_t peso = 1) noexcept {
     try {
 
         vertices.at(A).inserirAresta(&vertices.at(B), peso);
-        if(!m_dir) {
+        if(!m_dir and A != B) {
             vertices.at(B).inserirAresta(&vertices.at(A), peso);
         }
         return false;
@@ -78,7 +78,7 @@ bool ListGraph::removerAresta(id_t A, id_t B) noexcept {
     try {
 
         vertices.at(A).removerAresta(&vertices.at(B));
-        if(!m_dir) {
+        if(!m_dir and A != B) {
             vertices.at(B).removerAresta(&vertices.at(A));
         }
         return false;

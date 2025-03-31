@@ -56,13 +56,13 @@ private:
         }
 
 
-        int pesoAresta(Vertex *destination) {
+        std::optional<weight_t> pesoAresta(Vertex *destination) {
             for(id_t i = 0; i < this->edgesCount; i++) {
                 if(this->edges.at(i).destination == destination) {
                     return this->edges.at(i).weight;
                 }
             }
-            return -1;
+            return std::nullopt;
         }
 
         std::vector<Vertex*> retornarVizinhos() {
