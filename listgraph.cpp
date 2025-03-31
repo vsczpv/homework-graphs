@@ -50,7 +50,7 @@ void ListGraph::imprimeGrafo() noexcept {
         for(id_t  i = 0; i < verticesCount; i++) {
             std::cout << i << "\t" << vertices.at(i).label << " ->  |";
             for(id_t  j = 0; j < vertices.at(i).edgesCount; j++) {
-                std::cout << " " << vertices.at(i).edges.at(j).origin->label;
+                std::cout << " " << vertices.at(i).edges.at(j).destination->label;
                 if(m_pond) { std::cout << ": " << vertices.at(i).edges.at(j).weight << " |"; } else { std::cout << " |"; }
             }
             std::cout << "\n";
