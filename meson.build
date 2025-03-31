@@ -16,7 +16,7 @@ ncurses_dep = dependency('ncurses', required: host_machine.system() != 'windows'
 executable('graphs',
            'main.cpp',
            'matrixgraph.cpp',
-           'listgraphwrapper.cpp',
+           'listgraph.cpp',
             dependencies: [ncurses_dep]
 )
 
