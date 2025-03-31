@@ -19,9 +19,9 @@ bool ListGraph::inserirVertice(std::string label) noexcept {
         v.label = label;
         vertices.push_back(v);
         verticesCount++;
-        return true;
-    } catch (...) {
         return false;
+    } catch (...) {
+        return true;
     }
 }
 
@@ -36,10 +36,10 @@ bool ListGraph::removerVertice(id_t indice) noexcept {
         }
         vertices.erase(vertices.cbegin() + indice); // remove a vertice
         verticesCount--;
-        return true;
+        return false;
 
     } catch(...) {
-        return false;
+        return true;
     }
 }
 
@@ -67,10 +67,10 @@ bool ListGraph::inserirAresta(id_t A, id_t B, weight_t peso = 1) noexcept {
         if(!m_dir) {
             vertices.at(B).inserirAresta(&vertices.at(A), peso);
         }
-        return true;
+        return false;
     } catch(...) {
         std::cout << "ERRO: Vertices inválidos\n";
-        return false;
+        return true;
     }
 }
 
@@ -81,10 +81,10 @@ bool ListGraph::removerAresta(id_t A, id_t B) noexcept {
         if(!m_dir) {
             vertices.at(B).removerAresta(&vertices.at(A));
         }
-        return true;
+        return false;
     } catch(...) {
         std::cout << "ERRO: Vertices inválidos\n";
-        return false;
+        return true;
     }
 }
 
@@ -101,7 +101,7 @@ bool ListGraph::existeAresta(id_t A, id_t B) noexcept {
         return vertices.at(A).existeAresta(&vertices.at(B));
     } catch(...) {
         std::cout << "Solicitação inválida";
-        return false;
+        return true;
     }
 }
 

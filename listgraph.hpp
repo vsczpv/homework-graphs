@@ -1,4 +1,3 @@
-#include "listgraphwrapper.hpp"
 
 #ifndef LIST_GRAPH_HPP_
 #define LIST_GRAPH_HPP_
@@ -33,7 +32,7 @@ private:
             a.weight = weight;
             this->edges.push_back(a);
             this->edgesCount++;
-            return true;
+            return false;
         }
         bool removerAresta(Vertex *destination) {
             for(id_t i = 0; i < this->edgesCount; i++) {
@@ -41,10 +40,10 @@ private:
     //              this->arestas.erase(arestas.begin() + i);
                     this->edges.erase(edges.cbegin() + static_cast<signed>(i));//(signed) i);
                     edgesCount--;
-                    return true;
+                    return false;
                 }
             }
-            return false;
+            return true;
         }
 
         bool existeAresta(Vertex *destination) {
@@ -100,7 +99,7 @@ public:
         
         bool inserirVertice(std::string label)                 noexcept override;
         bool removerVertice(id_t idx)                          noexcept override;
-        bool inserirAresta (id_t A, id_t B, weight_t peso = 1) noexcept override;
+        bool inserirAresta (id_t A, id_t B, weight_t peso) noexcept override;
         bool removerAresta (id_t A, id_t B)                    noexcept override;
     
         std::optional<std::string> labelVertice(id_t idx) noexcept override;
