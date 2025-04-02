@@ -19,13 +19,13 @@ private:
         struct Edge {
             Vertex *origin;
             Vertex *destination;
-            int weight;
+            weight_t weight;
         };
 
         std::vector<Edge> edges;
         id_t edgesCount=0;
 
-        bool inserirAresta(Vertex *destination, int weight = 1) {
+        bool inserirAresta(Vertex *destination, weight_t weight = 1) {
             Edge a;
             a.origin = this;
             a.destination = destination;
