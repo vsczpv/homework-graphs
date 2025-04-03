@@ -21,8 +21,10 @@ private:
             weight_t weight;
         };
 
-        std::vector<Edge> edges;
-        id_t edgesCount=0;
+        std::vector<Edge> edgesFromIt;
+        id_t edgesFromItCount=0;
+        std::vector<Edge> edgesToIt;
+        id_t edgesToItCount=0;
 
         bool inserirAresta(Vertex *destination, weight_t weight = 1) {
             Edge a;
