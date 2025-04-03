@@ -26,8 +26,7 @@ private:
 
         bool inserirAresta(Vertex *destination, weight_t weight = 1) {
             Edge a;
-            a.origin = this;
-            a.destination = destination;
+            a.vertex = destination;
             a.weight = weight;
             this->edges.push_back(a);
             this->edgesCount++;
@@ -35,7 +34,7 @@ private:
         }
         bool removerAresta(Vertex *destination) {
             for(id_t i = 0; i < this->edgesCount; i++) {
-                if(this->edges.at(i).destination == destination) {
+                if(this->edges.at(i).vertex == destination) {
     //              this->arestas.erase(arestas.begin() + i);
                     this->edges.erase(edges.cbegin() + static_cast<signed>(i));//(signed) i);
                     edgesCount--;
@@ -47,7 +46,7 @@ private:
 
         bool existeAresta(Vertex *destination) {
             for(id_t i = 0; i < this->edgesCount; i++) {
-                if(this->edges.at(i).destination == destination) {
+                if(this->edges.at(i).vertex == destination) {
                     return true;
                 }
             }
@@ -57,7 +56,7 @@ private:
 
         std::optional<weight_t> pesoAresta(Vertex *destination) {
             for(id_t i = 0; i < this->edgesCount; i++) {
-                if(this->edges.at(i).destination == destination) {
+                if(this->edges.at(i).vertex == destination) {
                     return this->edges.at(i).weight;
                 }
             }
@@ -68,7 +67,7 @@ private:
             try {
                 std::vector<Vertex*> vizinhos;
                 for(id_t i = 0; i < this->edgesCount; i++) { // Coleta o label dos vizinhos
-                    vizinhos.push_back(this->edges.at(i).destination);
+                    vizinhos.push_back(this->edges.at(i).vertex);
                 }
                 return vizinhos;
 
