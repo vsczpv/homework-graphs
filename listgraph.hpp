@@ -8,6 +8,17 @@
 #include "igraph.hpp"
 
 
+// Features to Inplement
+// 1. edgesToIt should be simple vertices, not a real edge
+// 2. Before checking, existeAresta should verify witch is shorter, (1) edgesFromIt from origin or (2) edgesToIt from destination
+// 3. Better edges organization, to save time searching it
+
+
+// Implementar iterador
+// Implementar busca em largura
+// Implementar busca em profundidade
+// Implementar Dijkstra
+
 
 class ListGraph : public IGraph {
 
@@ -30,16 +41,46 @@ private:
             Edge a;
             a.vertex = destination;
             a.weight = weight;
-            this->edges.push_back(a);
-            this->edgesCount++;
+            this->edgesFromIt.push_back(a);
+            this->edgesFromItCount++;
+
+            destination->inserirArestaToIt(this); // Insere registro dessa aresta também no vértice destino
             return false;
         }
+        
+        bool inserirArestaToIt(Vertex *origin, weight_t weight = 1) { // Registra aresta que aponta para ele
+            Edge a;
+            a.vertex = origin;
+            a.weight = weight;
+            this->edgesToIt.push_back(a);
+            this->edgesToItCount++;
+            return false;
+        }
+
         bool removerAresta(Vertex *destination) {
-            for(id_t i = 0; i < this->edgesCount; i++) {
-                if(this->edges.at(i).vertex == destination) {
+
+            
+            for(id_t i = 0; i < this->edgesFromItCount; i++) {
+                if(this->edgesFromIt.at(i).vertex == destination) {
     //              this->arestas.erase(arestas.begin() + i);
-                    this->edges.erase(edges.cbegin() + static_cast<signed>(i));//(signed) i);
-                    edgesCount--;
+                    
+                    this->edgesFromIt.erase(edgesFromIt.cbegin() + static_cast<signed>(i));//(signed) i);
+                    edgesFromItCount--;
+
+                    destination->removerArestaToIt(this); // Remove também o registro da aresta no vértice destino
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        bool removerArestaToIt(Vertex *origin) { // Remove registro de aresta que aponta para ele
+            for(id_t i = 0; i < this->edgesToItCount; i++) {
+                if(this->edgesToIt.at(i).vertex == origin) {
+    //              this->arestas.erase(arestas.begin() + i);
+                    
+                    this->edgesToIt.erase(edgesToIt.cbegin() + static_cast<signed>(i));//(signed) i);
+                    edgesToItCount--;
                     return false;
                 }
             }
@@ -47,8 +88,8 @@ private:
         }
 
         bool existeAresta(Vertex *destination) {
-            for(id_t i = 0; i < this->edgesCount; i++) {
-                if(this->edges.at(i).vertex == destination) {
+            for(id_t i = 0; i < this->edgesFromItCount; i++) {
+                if(this->edgesFromIt.at(i).vertex == destination) {
                     return true;
                 }
             }
@@ -57,9 +98,9 @@ private:
 
 
         std::optional<weight_t> pesoAresta(Vertex *destination) {
-            for(id_t i = 0; i < this->edgesCount; i++) {
-                if(this->edges.at(i).vertex == destination) {
-                    return this->edges.at(i).weight;
+            for(id_t i = 0; i < this->edgesFromItCount; i++) {
+                if(this->edgesFromIt.at(i).vertex == destination) {
+                    return this->edgesFromIt.at(i).weight;
                 }
             }
             return std::nullopt;
@@ -68,8 +109,8 @@ private:
         std::vector<Vertex*> retornarVizinhos() {
             try {
                 std::vector<Vertex*> vizinhos;
-                for(id_t i = 0; i < this->edgesCount; i++) { // Coleta o label dos vizinhos
-                    vizinhos.push_back(this->edges.at(i).vertex);
+                for(id_t i = 0; i < this->edgesFromItCount; i++) { // Coleta o label dos vizinhos
+                    vizinhos.push_back(this->edgesFromIt.at(i).vertex);
                 }
                 return vizinhos;
 
