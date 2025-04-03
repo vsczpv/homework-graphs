@@ -17,8 +17,7 @@ private:
         std::string label;
 
         struct Edge {
-            Vertex *origin;
-            Vertex *destination;
+            Vertex *vertex;
             weight_t weight;
         };
 
