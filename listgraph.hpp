@@ -9,13 +9,14 @@
 
 
 // Features to Inplement
-// 1. edgesToIt should be simple vertices, not a real edge
+// 1. Passar a usar ID; Na exclusão de um vértice, apagar ele apenas se for o vértice final, se for o vértice do eio, use esse espaço para colocar futuros vértices; Arestas devem conter os IDs, não poteiros
+// 2. edgesToIt should be simple vertices, not a real edge
 // 2. Before checking, existeAresta should verify witch is shorter, (1) edgesFromIt from origin or (2) edgesToIt from destination
 // 3. Better edges organization, to save time searching it
 
 
-// Implementar iterador
-// Implementar busca em largura
+// Implementar iterador XX (aprender a usar o implementado)
+// Implementar busca em largura XX (aprender a usar o implementado)
 // Implementar busca em profundidade
 // Implementar Dijkstra
 
@@ -115,8 +116,25 @@ private:
                 return vizinhos;
 
             } catch(...) {
+                std::cout << "\nErro em pegar vizinhos From It";
                 std::vector<Vertex*> vizinhos;
                 return vizinhos;
+            }
+        }
+
+        std::vector<Vertex*> retornarVizinhosToIt() {
+            try {
+                std::vector<Vertex*> vizinhos;
+                for(id_t i = 0; i < this->edgesToItCount; i++) { // Coleta o label dos vizinhos
+                    vizinhos.push_back(this->edgesToIt.at(i).vertex);
+                }
+                return vizinhos;
+
+            } catch(...) {
+                std::cout << "\nErro em pegar vizinhos To It";
+                std::vector<Vertex*> vizinhos;
+                return vizinhos;
+                
             }
         }
 

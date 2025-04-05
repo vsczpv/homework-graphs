@@ -28,17 +28,27 @@ bool ListGraph::inserirVertice(std::string label) noexcept {
 
 bool ListGraph::removerVertice(id_t indice) noexcept {
     try {
-        if (indice >= verticesCount)
-            return false;
+        if (indice >= verticesCount) return false;
 
-        for(id_t j = 0; j < verticesCount; j++) { // remove arestas que apontam para ele
-            removerAresta(j, indice);
+        // remove arestas que apontam para ele
+        std::vector<Vertex*> vizinhos = vertices[indice].retornarVizinhosToIt();
+        for(id_t j = 0; j < vizinhos.size(); j++) {
+            vizinhos.at(j)->removerAresta(vizinhos.at(j));
         }
-        vertices.erase(vertices.cbegin() + indice); // remove a vertice
+
+        // remove registros de arestas para as quais ele aponta
+        vizinhos = vertices[indice].retornarVizinhos();
+        for(id_t j = 0; j < vizinhos.size(); j++) {
+            vizinhos.at(j)->removerAresta(vizinhos.at(j));
+        }
+
+        // remove o vertice
+        vertices.erase(vertices.cbegin() + indice); 
         verticesCount--;
         return false;
 
     } catch(...) {
+        std::cout << "\nERRO\nERRO\nERRO\nERRO";
         return true;
     }
 }
@@ -49,9 +59,9 @@ void ListGraph::imprimeGrafo() noexcept {
         std::cout << "\nLista\n";
         for(id_t  i = 0; i < verticesCount; i++) {
             std::cout << i << "\t" << vertices.at(i).label << " ->  |";
-            for(id_t  j = 0; j < vertices.at(i).edgesCount; j++) {
-                std::cout << " " << vertices.at(i).edges.at(j).destination->label;
-                if(m_pond) { std::cout << ": " << vertices.at(i).edges.at(j).weight << " |"; } else { std::cout << " |"; }
+            for(id_t  j = 0; j < vertices.at(i).edgesFromItCount; j++) {
+                std::cout << " " << vertices.at(i).edgesFromIt.at(j).vertex->label;
+                if(m_pond) { std::cout << ": " << vertices.at(i).edgesFromIt.at(j).weight << " |"; } else { std::cout << " |"; }
             }
             std::cout << "\n";
         }
@@ -64,8 +74,10 @@ bool ListGraph::inserirAresta(id_t A, id_t B, weight_t peso = 1) noexcept {
     try {
 
         vertices.at(A).inserirAresta(&vertices.at(B), peso);
-        if(!m_dir and A != B) {
-            vertices.at(B).inserirAresta(&vertices.at(A), peso);
+        if(!m_dir) {
+            vertices.at(B).inserirAresta(&vertices.at(A), peso);// Para grafos não direcionados, adiciona a aresta no destino
+        } else {
+            vertices.at(B).inserirArestaToIt(&vertices.at(A), peso);// Adiciona registro de aresta no vertice destino
         }
         return false;
     } catch(...) {
@@ -77,8 +89,10 @@ bool ListGraph::removerAresta(id_t A, id_t B) noexcept {
     try {
 
         vertices.at(A).removerAresta(&vertices.at(B));
-        if(!m_dir and A != B) {
+        if(!m_dir) {
             vertices.at(B).removerAresta(&vertices.at(A));
+        } else {
+            vertices.at(B).removerArestaToIt(&vertices.at(A));
         }
         return false;
     } catch(...) {
