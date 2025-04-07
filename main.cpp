@@ -203,6 +203,7 @@ void menu(IGraph& grafo) {
             }
 
             case 9: {
+				grafo.imprimeGrafo();
 				printg(grafo);
                 break;
             }
