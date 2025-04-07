@@ -3,11 +3,109 @@
 
 #include <string>
 #include <vector>
+#include <unordered_set>
 #include <optional>
 #include <cstdint>
+#include <cstring>
+#include <queue>
+#include <stack>
 
 using weight_t = float;
 using id_t     = uint32_t;
+
+class IGraph;
+
+class IGraphBFSIter {
+	IGraph&                   m_graph;
+	bool                      m_end;
+	std::unordered_set<id_t>& m_visits;
+	std::queue<id_t>          m_queue = {};
+	id_t                      m_current_node;
+public:
+	IGraphBFSIter(IGraph& parent, bool is_end, std::unordered_set<id_t>& visitstore, id_t root)
+		: m_graph       (parent)
+		, m_end         (is_end)
+		, m_visits      (visitstore)
+		, m_current_node(root)
+	{}
+
+	IGraphBFSIter(const IGraphBFSIter& rhs)
+		: m_graph        (rhs.m_graph)
+		, m_end          (rhs.m_end)
+		, m_visits       (rhs.m_visits)
+		, m_queue        (rhs.m_queue)
+		, m_current_node (rhs.m_current_node)
+	{}
+
+	~IGraphBFSIter() = default;
+
+	IGraphBFSIter& operator=(const IGraphBFSIter& rhs);
+
+	IGraphBFSIter& operator++(); /* prefix */
+
+	id_t operator*() const;
+
+	friend bool operator==(const IGraphBFSIter& lhs, const IGraphBFSIter& rhs);
+	friend bool operator!=(const IGraphBFSIter& lhs, const IGraphBFSIter& rhs);
+
+	friend void swap(IGraphBFSIter& lhs, IGraphBFSIter& rhs);
+};
+
+class IGraphDFSIter {
+	IGraph&                   m_graph;
+	bool                      m_end;
+	std::unordered_set<id_t>& m_visits;
+	std::stack<id_t>          m_stack;
+	id_t                      m_current_node;
+public:
+	IGraphDFSIter(IGraph& parent, bool is_end, std::unordered_set<id_t>& visitstore, id_t root)
+		: m_graph       (parent)
+		, m_end         (is_end)
+		, m_visits      (visitstore)
+		, m_current_node(root)
+	{}
+
+	~IGraphDFSIter() = default;
+
+	IGraphDFSIter& operator=(const IGraphDFSIter& rhs);
+
+	IGraphDFSIter& operator++(); /* prefix */
+
+	id_t operator*() const;
+
+	friend bool operator==(const IGraphDFSIter& lhs, const IGraphDFSIter& rhs);
+	friend bool operator!=(const IGraphDFSIter& lhs, const IGraphDFSIter& rhs);
+
+	friend void swap(IGraphDFSIter& lhs, IGraphDFSIter& rhs);
+};
+
+class IGraphBFSIterGen {
+	IGraph&                  m_graph;
+	std::unordered_set<id_t> m_visits = {};
+	id_t                     m_root;
+public:
+	IGraphBFSIterGen(IGraph& parent, id_t root)
+		: m_graph(parent)
+		, m_root (root)
+	{}
+
+	IGraphBFSIter begin();
+	IGraphBFSIter end();
+};
+
+class IGraphDFSIterGen {
+	IGraph&                  m_graph;
+	std::unordered_set<id_t> m_visits = {};
+	id_t                     m_root;
+public:
+	IGraphDFSIterGen(IGraph& parent, id_t root)
+		: m_graph(parent)
+		, m_root (root)
+	{}
+
+	IGraphDFSIter begin();
+	IGraphDFSIter end();
+};
 
 class IGraph {
 
@@ -35,6 +133,14 @@ public:
 	virtual bool dir (void) noexcept = 0;
 
 	virtual ~IGraph() = default;
+
+	IGraphBFSIterGen bfs(id_t root) noexcept {
+		return IGraphBFSIterGen(*this, root);
+	}
+
+	IGraphDFSIterGen dfs(id_t root) noexcept {
+		return IGraphDFSIterGen(*this, root);
+	}
 };
 
 #endif // IGRAPH_HPP_

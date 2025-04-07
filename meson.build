@@ -17,6 +17,7 @@ executable('graphs',
            'main.cpp',
            'matrixgraph.cpp',
            'listgraph.cpp',
+           'igraphiter.cpp',
             dependencies: [ncurses_dep]
 )
 
