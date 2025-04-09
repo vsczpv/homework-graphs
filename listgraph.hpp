@@ -7,20 +7,6 @@
 
 #include "igraph.hpp"
 
-
-// Features to Inplement
-// 1. Passar a usar ID; Na exclusão de um vértice, apagar ele apenas se for o vértice final, se for o vértice do eio, use esse espaço para colocar futuros vértices; Arestas devem conter os IDs, não poteiros
-// 2. edgesToIt should be simple vertices, not a real edge
-// 2. Before checking, existeAresta should verify witch is shorter, (1) edgesFromIt from origin or (2) edgesToIt from destination
-// 3. Better edges organization, to save time searching it
-
-
-// Implementar iterador XX (aprender a usar o implementado)
-// Implementar busca em largura XX (aprender a usar o implementado)
-// Implementar busca em profundidade
-// Implementar Dijkstra
-
-
 class ListGraph : public IGraph {
 
 private:
