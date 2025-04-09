@@ -141,7 +141,7 @@ bool ListGraph::removerAresta(id_t A, id_t B) noexcept {
 std::optional<std::string> ListGraph::labelVertice(id_t index) noexcept {
     try {
 
-        if(vertices.at(index).exists) return std::nullopt;
+        if(!vertices.at(index).exists) return std::nullopt;
 
         return vertices.at(index).label;
     } catch(...) {

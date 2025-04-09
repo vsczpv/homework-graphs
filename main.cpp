@@ -2,6 +2,8 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <fstream>
+#include <sstream>
 
 #include "vin.hpp"
 
@@ -9,7 +11,89 @@
 #include "matrixgraph.hpp"
 #include "listgraph.hpp"
 
+#include <cassert>
+#include <unistd.h>
+
 using namespace std;
+
+void foo(IGraph& graph)
+{
+
+	auto bar = graph.bfs(6);
+
+	for (auto no : bar)
+	{
+		printf("%i\n", no);
+	}
+
+
+}
+
+void printg(IGraph& graph)
+{
+
+	auto outerdfsi = graph.dfs(0);
+
+	for (auto u : outerdfsi)
+	{
+		std::stringstream graphtext;
+
+		const char* edge;
+
+		if (graph.dir())
+		{
+			graphtext << "digraph out {\n";
+			edge = "->";
+		}
+		else
+		{
+			graphtext << "graph out {\n";
+			edge = "--";
+		}
+
+		auto bfsi = graph.bfs(0);
+
+		assert(bfsi.begin() != bfsi.end());
+
+		for (auto v : bfsi)
+		{
+			auto nei = graph.retornarVizinhos(v);
+
+			auto lbl = [&graph](id_t x) {
+				return "\"" + std::to_string(x) + ": " + *graph.labelVertice(x) + "\"";
+			};
+
+			const char* attrib;
+
+			if (u == v)
+				attrib = " [style=filled color=black fontcolor=white] ";
+			else
+				attrib = "";
+
+			graphtext << lbl(v) << attrib << "\n";
+
+			if (nei) for (auto n : *nei)
+				graphtext << lbl(v) << edge << lbl(n) << "\n";
+		}
+
+		graphtext << "}";
+
+		std::fstream out;
+		out.open("out.txt", std::fstream::out | std::fstream::trunc);
+
+		out << graphtext.str();
+
+		out.flush();
+		out.close();
+
+		// TODO: Make this not suck
+		system("dot -Tpng out.txt > out.png");
+
+		sleep(2);
+	}
+
+	return;
+}
 
 /* recebe referencia para o grafo */
 void menu(IGraph& grafo) {
@@ -119,7 +203,8 @@ void menu(IGraph& grafo) {
             }
 
             case 9: {
-                grafo.imprimeGrafo();
+				grafo.imprimeGrafo();
+				printg(grafo);
                 break;
             }
 
