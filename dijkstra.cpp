@@ -17,7 +17,7 @@ void DijkstraTable::mark_distance(id_t a, id_t b)
 	if (m_prevs[a])
 	{
 		auto curdis = m_dists[b];
-		auto newdis = *m_graph.pesoAresta(a, b) + *m_graph.pesoAresta(*m_prevs[a], a);
+		auto newdis = *m_graph.pesoAresta(a, b) + m_dists[a]; //*m_graph.pesoAresta(*m_prevs[a], a);
 
 		if (newdis < curdis)
 			m_dists[b] = newdis,
