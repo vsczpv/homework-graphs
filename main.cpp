@@ -8,8 +8,7 @@
 #include "vin.hpp"
 
 #include "igraph.hpp"
-#include "matrixgraph.hpp"
-#include "listgraph.hpp"
+#include "igraphloader.hpp"
 
 #include <cassert>
 #include <unistd.h>
@@ -245,7 +244,10 @@ void menu(IGraph& grafo) {
     }
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+
+	if (argc == 1)
+		return EXIT_FAILURE;
 
 	vin::compat_prologue();
 
@@ -256,31 +258,17 @@ int main() {
 	          << "  0. Lista de Referência\n"
 	          << "  1. Matriz de Adjacência\n" << std::endl;
 
-	auto matrix = vin::ask<bool>("=> ");
+	auto type = igraphtype_from_bool(vin::ask<bool>("=> "));
 
+	auto grafo = std::unique_ptr<IGraph>(IGraphLoader(type).from_file(argv[1]));
 
-    std::cout << "\n\nEscolha o tipo de grafo que deseja criar:\n\n"
-              << "  0. Grafo Não Direcionado\n"
-              << "  1. Grafo Direcionado\n" << std::endl;
+	if (grafo.get() == NULL)
+	{
+		std::cerr << "Erro ao carregar o grafo." << vin::endl;
+		return EXIT_FAILURE;
+	}
 
-	auto direcionado = vin::ask<bool>("=> ");
-
-	std::cout << "\n\nEscolha o tipo de grafo que deseja criar:\n\n"
-	          << "  0. Grafo Não Ponderado\n"
-	          << "  1. Grafo Ponderado\n" << std::endl;
-
-	auto ponderado = vin::ask<bool>("=> ");
-
-	/* Cria o Grafo */
-
-	std::unique_ptr <IGraph> grafo;
-
-	if (matrix)
-		grafo = std::make_unique<MatrixGraph>(ponderado, direcionado);
-	else
-		grafo = std::make_unique<ListGraph>(ponderado, direcionado);
-
-	std::cout << VT_CLEAR << "Grafo Criado\n";
+	std::cout << VT_CLEAR << "Grafo Carregado" << std::endl;
 
 	menu(*grafo);
 

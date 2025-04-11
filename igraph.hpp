@@ -12,7 +12,6 @@
 #include <queue>
 #include <stack>
 
-
 #include <iostream>
 
 using weight_t = float;

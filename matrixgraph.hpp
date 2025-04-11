@@ -7,7 +7,7 @@
 
 #include "igraph.hpp"
 
-#define MATRIX_MAX 8
+#define MATRIX_MAX 4096
 
 using std::pair;
 
