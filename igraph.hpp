@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>      // para usar std::reverse
 #include <unordered_set>
 #include <optional>
 #include <cstdint>
@@ -145,9 +146,26 @@ class DijkstraTableElement {
 		return originDistance;
 	}
 
+	id_t getPreviousVertex() {
+		return previousVertex;
+	}
+
 	DijkstraTableElement(id_t vertexId, std::optional<std::vector<id_t>> neigborhood, weight_t originDistance, id_t previousVertex, bool found)
 	: vertexId(vertexId), neighborhood(neighborhood), originDistance(originDistance), previousVertex(previousVertex), found(found)
 	{};
+
+	void update(weight_t originDistance, id_t previousVertex) {
+		originDistance = originDistance;
+		previousVertex = previousVertex;
+	}
+
+	bool isfound() {
+		return found;
+	}
+
+	void find() {
+		found = true;
+	}
 
 };
 
@@ -173,11 +191,33 @@ public:
 			return true;
 		}
 	}
+
+	void createTabelaConversaoElement(id_t naDijkstraTable, id_t noGrafo) {
+		if(noGrafo > 10000) { // Para não consumir memória de mais, vai só até o vértice 10000
+			return;
+		}
+
+		// O vetor será um espelho do grafo, o id x do grafo ficará no id x daqui
+		if(noGrafo > convertionTable.size()){
+			for(int i = 0; i < noGrafo; i++) {
+				convertionTable.push_back(-1);
+			}
+		}
+		convertionTable.at(noGrafo) = naDijkstraTable;
+	}
 	
 	DijkstraTableElement at(id_t id) {
 		return table.at(id);
 	}
 
+	int size() {
+		return table.size();
+	}
+
+	void updateElement(id_t id, weight_t originDistance, id_t previousVertex) {
+		table.at(id).update(originDistance, previousVertex);
+	}
+ 
 	id_t findByVertexId(id_t id) {
 		// Com o id do vértice, retorna aonde ele está
 		for(int i = 0; i < table.size(); i++) {
@@ -253,6 +293,7 @@ public:
 
 	virtual bool               inserirVertice(std::string label)                 noexcept = 0;
 	virtual bool               removerVertice(id_t idx)                          noexcept = 0;
+	virtual bool               existeVertice (id_t idx)                          noexcept = 0;
 	virtual bool               inserirAresta (id_t A, id_t B, weight_t peso = 1) noexcept = 0;
 	virtual bool               removerAresta (id_t A, id_t B)                    noexcept = 0;
 	virtual std::vector<id_t>  getVertices   ()                                  noexcept = 0;
@@ -295,28 +336,38 @@ public:
 		DijkstraTable dijkstraTable;
 		std::vector<id_t> allVertices = getVertices();
 		for(int i = 0; i < allVertices.size(); i++) {
-			dijkstraTable.createElement(i, retornarVizinhos(i), 0, -1, 0);
+			dijkstraTable.createElement(allVertices.at(i), retornarVizinhos(i), 0, -1, 0);
+			dijkstraTable.createTabelaConversaoElement(i, allVertices.at(i));
 		}
 
 	/*	Para cada vizinho ($v$) do vértice atual ($u$):
 	1. Calcular a distância ($d$) dele ao início considerando o caminho atual $d(v) = d(u) + w(u, v)$
 	2. Se $d(u)$ atual for menor do que a $d(u)$ já salva, substituir todos os atributos pelos novos.
-	3. Após visitar um nó´, marca-lo como visitado.
+	3. Após visitar um nó, marca-lo como visitado.
 	4. LOOP, repetir até que todos os nós tenham sido visitados ou o vértice destino tenha sido encontrado
 	*/
 	auto bfs = this->djkbfs(origin);
 
 	for (auto it = bfs.begin(); it != bfs.end(); ++it)
 	{
+		id_t distanciaAnterior = dijkstraTable.at(it.getCurrentNode()).getOriginDistance();
+		id_t distanciaCaminhoAtual = pesoAresta(it.getCurrentNode(), it.getPreviousNode()).value_or(999.0);
+		id_t pesoDaAresta = dijkstraTable.at(it.getPreviousNode()).getOriginDistance();
 
-		if(dijkstraTable.at(it.getCurrentNode()).getOriginDistance() > pesoAresta(it.getCurrentNode(), it.getPreviousNode()).value_or(999.0) + dijkstraTable.at(it.getPreviousNode()).getOriginDistance()) {
-			
+
+		if(distanciaAnterior > distanciaCaminhoAtual + distanciaAnterior) {
+			dijkstraTable.at(it.getCurrentNode()).update(distanciaCaminhoAtual + distanciaAnterior, it.getPreviousNode()); // d(v) = w(u, v)
 		}
 
-		// d  = verticePai.pesoaresta(u)
-		// if dijkstraTable.at()
+		// 5. Ao Encontrar o vértice destino, reconstruir ele utilizando os vértices pais e retornar o caminho
+		std::vector<std::vector<id_t>> caminhos(dijkstraTable.size());
 
-
+		for(int i = 0; i < dijkstraTable.size(); i++) {
+			for(int j = dijkstraTable.at(i).getVertexId(); j != origin; j = dijkstraTable.at(i).getPreviousVertex()) {
+				caminhos[i].push_back(allVertices.at(j));
+			}
+			std::reverse(caminhos[i].begin(), caminhos[i].end());
+		}
 
 	}
 //	IGraphBFSIter(this, false, , origem);
