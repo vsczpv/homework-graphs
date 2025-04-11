@@ -6,7 +6,7 @@ project(
     default_options : [
         'buildtype=debug',
         'optimization=0',
-        'cpp_std=c++17',
+        'cpp_std=c++20',
     ],
     meson_version: '>= 0.60.0',
 )
@@ -19,6 +19,7 @@ executable('graphs',
            'listgraph.cpp',
            'igraphiter.cpp',
            'igraphloader.cpp',
+           'dijkstra.cpp',
             dependencies: [ncurses_dep]
 )
 

@@ -1,6 +1,5 @@
 *.kdev4
 .clang-format
 .vscode
-in.txt
-out.txt
+*.txt
 out.png

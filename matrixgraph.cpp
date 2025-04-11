@@ -141,5 +141,8 @@ void MatrixGraph::imprimeGrafo(void) noexcept {
 
 std::vector<id_t> MatrixGraph::getVertices() noexcept {
     std::vector<id_t> allVertices;
+	for (id_t i = 0; i < m_stg.labels.size(); i++)
+		if (m_stg.labels[i].first)
+			allVertices.push_back(i);
     return allVertices;
 }

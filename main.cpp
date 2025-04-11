@@ -28,12 +28,14 @@ void foo(IGraph& graph)
 
 }
 
-void printg(IGraph& graph)
+void view_path(IGraph& graph, id_t rootid, std::deque<id_t> path)
 {
 
-	auto outerdfsi = graph.dfs(0);
+//	id_t rootid = 1;
 
-	for (auto u : outerdfsi)
+//	auto outerdfsi = graph.dfs(rootid);
+
+	for (auto u : path)
 	{
 		std::stringstream graphtext;
 
@@ -50,7 +52,7 @@ void printg(IGraph& graph)
 			edge = "--";
 		}
 
-		auto bfsi = graph.bfs(0);
+		auto bfsi = graph.bfs(rootid);
 
 		assert(bfsi.begin() != bfsi.end());
 
@@ -108,8 +110,10 @@ void menu(IGraph& grafo) {
 		        "   7. Ver Peso da Aresta\n"
 		        "   8. Retornar Vizinhos do Vértice\n"
 		        "   9. Imprimir Grafo\n"
-		        "  10. Limpar Tela\n\n: "
-				"  11. Imprimir Dijkstra\n\n"
+		        "  10. Limpar Tela\n"
+				"  11. Imprimir Dijkstra\n"
+				"  12. Visualizar BFS\n"
+				"  13. Visualizar DFS\n"
 		        "   0. Sair\n";
 
 		int opcao = vin::ask<int>("=> ");
@@ -204,7 +208,7 @@ void menu(IGraph& grafo) {
 
             case 9: {
 				grafo.imprimeGrafo();
-				printg(grafo);
+//				view_path(grafo);
                 break;
             }
 
@@ -218,26 +222,66 @@ void menu(IGraph& grafo) {
             }
 
 			case 11: {
-
 				int origem  = vin::ask<int>("\nVertice de origem: ");
 				
-			try {
-				std::vector<std::vector<id_t>> caminhos = grafo.dijkstra(origem);
-				for(id_t i = 0; i < caminhos.size(); i++){
-					std::cout << "\n" << i << "\t" << " -> |";
-					for(id_t j = 0; j < caminhos[i].size(); j++) {
-						std::cout << caminhos[i].at(j) << " | ";
-						
+				try {
+					std::vector<std::vector<id_t>> caminhos = grafo.dijkstra(origem);
+					for(id_t i = 0; i < caminhos.size(); i++){
+						std::cout << "\n" << i << "\t" << " -> |";
+						for(id_t j = 0; j < caminhos[i].size(); j++) {
+							std::cout << caminhos[i].at(j) << " | ";
+
+						}
+						std::cout << "\n\n";
 					}
-					std::cout << "\n\n";
+				} catch (const std::exception& e) {
+					std::cout << "\n\nERRO - ERRo no DIJKSTRA - ERRO\n\nERRO - ERRo no DIJKSTRA - ERRO";
+					std::cout << "\n Exceção " << e.what();
 				}
-			} catch (const std::exception& e) {
-				std::cout << "\n\nERRO - ERRo no DIJKSTRA - ERRO\n\nERRO - ERRo no DIJKSTRA - ERRO";
-				std::cout << "\n Exceção " << e.what();
+
+				break;
 			}
-			
-			
-			
+
+			case 12:
+			{
+
+				int origem = vin::ask<int>("\nVertice de origem: ");
+
+				std::deque <id_t> path = {};
+
+				auto bfs = grafo.bfs(origem);
+
+				for (auto v : bfs) path.push_back(v);
+
+				view_path(grafo, origem, path);
+
+				break;
+			}
+
+			case 13:
+			{
+
+				int origem = vin::ask<int>("\nVertice de origem: ");
+
+				std::deque <id_t> path = {};
+
+				auto dfs = grafo.dfs(origem);
+
+				for (auto v : dfs) path.push_back(v);
+
+				view_path(grafo, origem, path);
+
+				break;
+			}
+
+			case 14:
+			{
+
+				int origem = vin::ask<int>("\nVertice de origem: ");
+
+				grafo.my_dijktra(origem).dbgprint();
+
+				break;
 			}
         }
 

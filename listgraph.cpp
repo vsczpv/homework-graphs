@@ -1,9 +1,5 @@
 #include "listgraph.hpp"
 
-
-
-        
-
 bool ListGraph::pond(void) noexcept {
     return m_pond;
 }
@@ -173,6 +169,7 @@ std::optional<weight_t> ListGraph::pesoAresta(id_t A, id_t B) noexcept {
         } else {
             return std::nullopt;
         }
+
     } catch(...) {
         return std::nullopt;
     }

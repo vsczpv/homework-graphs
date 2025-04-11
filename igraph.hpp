@@ -2,6 +2,7 @@
 #define IGRAPH_HPP_
 
 #include <string>
+#include <cassert>
 #include <vector>
 #include <limits>
 #include <algorithm>      // para usar std::reverse
@@ -11,6 +12,7 @@
 #include <cstring>
 #include <queue>
 #include <stack>
+#include <map>
 
 #include <iostream>
 
@@ -158,8 +160,8 @@ class DijkstraTableElement {
 	{};
 
 	void update(weight_t originDistance, id_t previousVertex) {
-		originDistance = originDistance;
-		previousVertex = previousVertex;
+		this->originDistance = originDistance;
+		this->previousVertex = previousVertex;
 		found = true;
 	}
 
@@ -232,6 +234,7 @@ public:
 		for(size_t i = 0; i < table.size(); i++) {
 			if(table.at(i).getVertexId() == id) return i;
 		}
+		assert(false); // TODO
 	}
 
 };
@@ -295,6 +298,23 @@ public:
 	DijkstraIGraphBFSIter end();
 };
 
+class MyDijkstraTable {
+private:
+	std::map<id_t, weight_t>            m_dists  = {};
+	std::map<id_t, std::optional<id_t>> m_prevs  = {};
+	std::map<id_t, bool>                m_closed = {};
+	IGraph& m_graph;
+public:
+	MyDijkstraTable(IGraph& graph);
+
+	void mark_distance(id_t a, id_t b);
+
+	bool is_closed(id_t v) noexcept;
+	void set_closed(id_t v) noexcept;
+	void reset_dist(id_t v) noexcept;
+
+	void dbgprint(void);
+};
 
 class IGraph {
 
@@ -336,6 +356,7 @@ public:
 		return DijkstraIGraphBFSIterGen(*this, root);
 	} // Iterador usado pelo Dijkstra
 
+	MyDijkstraTable my_dijktra(int origin);
 
 	std::vector<std::vector<id_t>> dijkstra(id_t origin) {
 		//          Definir um vértice de Origem ^
@@ -357,29 +378,29 @@ public:
 
 		dijkstraTable.createElement(fim, std::nullopt, 0, std::nullopt, 1);
 		
-	/*	Para cada vizinho ($v$) do vértice atual ($u$):
-	1. Calcular a distância ($d$) dele ao início considerando o caminho atual $d(v) = d(u) + w(u, v)$
-	2. Se $d(u)$ atual for menor do que a $d(u)$ já salva, substituir todos os atributos pelos novos.
-	3. Após visitar um nó, marca-lo como visitado.
-	4. LOOP, repetir até que todos os nós tenham sido visitados ou o vértice destino tenha sido encontrado
-	*/
-	auto bfs = this->djkbfs(origin);
+		/*	Para cada vizinho ($v$) do vértice atual ($u$):
+		1. Calcular a distância ($d$) dele ao início considerando o caminho atual $d(v) = d(u) + w(u, v)$
+		2. Se $d(u)$ atual for menor do que a $d(u)$ já salva, substituir todos os atributos pelos novos.
+		3. Após visitar um nó, marca-lo como visitado.
+		4. LOOP, repetir até que todos os nós tenham sido visitados ou o vértice destino tenha sido encontrado
+		*/
+		auto bfs = this->djkbfs(origin);
 
-	for (auto it = ++bfs.begin(); it != bfs.end(); ++it) // Viaja pela BFS
-	{
+		for (auto it = ++bfs.begin(); it != bfs.end(); ++it) // Viaja pela BFS
+		{
 
-		weight_t distanciaAnterior = dijkstraTable.at(it.getCurrentNode()).getOriginDistance();
-		weight_t distanciaCaminhoAtual = dijkstraTable.at(it.getPreviousNode()).getOriginDistance();
-		weight_t pesoDaAresta = pesoAresta(it.getPreviousNode(), it.getCurrentNode()).value_or(999.0);
-		std::cout << "\n\nvértice anterior: " << it.getPreviousNode();
-		std::cout << "\ndistanciaAnterior: " << distanciaAnterior << "\ndistanciaCaminhoAtual: " << distanciaCaminhoAtual << "\npesoDaAresta: " << pesoDaAresta;
+			weight_t distanciaAnterior = dijkstraTable.at(it.getCurrentNode()).getOriginDistance();
+			weight_t distanciaCaminhoAtual = dijkstraTable.at(it.getPreviousNode()).getOriginDistance();
+			weight_t pesoDaAresta = pesoAresta(it.getPreviousNode(), it.getCurrentNode()).value_or(999.0);
+			std::cout << "\n\nvértice anterior: " << it.getPreviousNode();
+			std::cout << "\ndistanciaAnterior: " << distanciaAnterior << "\ndistanciaCaminhoAtual: " << distanciaCaminhoAtual << "\npesoDaAresta: " << pesoDaAresta;
 
-		if(distanciaAnterior > distanciaCaminhoAtual + pesoDaAresta) { // Se o novo caminho for melhor
-			dijkstraTable.at(it.getCurrentNode()).update(distanciaCaminhoAtual + pesoDaAresta, it.getPreviousNode()); // d(v) = w(u, v)
-			std::cout << "\nRealizando Update";
+			if(distanciaAnterior > distanciaCaminhoAtual + pesoDaAresta) { // Se o novo caminho for melhor
+				dijkstraTable.at(it.getCurrentNode()).update(distanciaCaminhoAtual + pesoDaAresta, it.getPreviousNode()); // d(v) = w(u, v)
+				std::cout << "\nRealizando Update";
+			}
+
 		}
-		
-	}
 		// 5. Ao Encontrar o vértice destino, reconstruir ele utilizando os vértices pais e retornar o caminho
 		std::vector<std::vector<id_t>> caminhos;
 		caminhos.resize(dijkstraTable.size());
@@ -394,7 +415,7 @@ public:
 			std::reverse(caminhos[i].begin(), caminhos[i].end()); // inverte o caminho, já que foi reconstruído de trás para frente
 		}
 		
-	return caminhos;
+		return caminhos;
 
 	}
 
