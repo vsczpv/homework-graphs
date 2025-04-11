@@ -137,3 +137,9 @@ void MatrixGraph::imprimeGrafo(void) noexcept {
 	}
 
 }
+
+
+std::vector<id_t> MatrixGraph::getVertices() noexcept {
+    std::vector<id_t> allVertices;
+    return allVertices;
+}

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <limits>
 #include <algorithm>      // para usar std::reverse
 #include <unordered_set>
 #include <optional>
@@ -10,6 +11,9 @@
 #include <cstring>
 #include <queue>
 #include <stack>
+
+
+#include <iostream>
 
 using weight_t = float;
 using id_t     = uint32_t;
@@ -133,7 +137,7 @@ class DijkstraTableElement {
 		id_t              vertexId;
 		std::optional<std::vector<id_t>> neighborhood;
 		weight_t          originDistance;
-		id_t              previousVertex;
+		std::optional<id_t>              previousVertex;
 		bool              found;
 
 	public:
@@ -146,17 +150,18 @@ class DijkstraTableElement {
 		return originDistance;
 	}
 
-	id_t getPreviousVertex() {
+	std::optional<id_t> getPreviousVertex() {
 		return previousVertex;
 	}
 
-	DijkstraTableElement(id_t vertexId, std::optional<std::vector<id_t>> neigborhood, weight_t originDistance, id_t previousVertex, bool found)
+	DijkstraTableElement(id_t vertexId, std::optional<std::vector<id_t>> neigborhood, weight_t originDistance, std::optional<id_t> previousVertex, bool found)
 	: vertexId(vertexId), neighborhood(neighborhood), originDistance(originDistance), previousVertex(previousVertex), found(found)
 	{};
 
 	void update(weight_t originDistance, id_t previousVertex) {
 		originDistance = originDistance;
 		previousVertex = previousVertex;
+		found = true;
 	}
 
 	bool isfound() {
@@ -182,7 +187,7 @@ public:
 	: table(), convertionTable()
 	{};
 
-	bool createElement(id_t vertexId, std::optional<std::vector<id_t>> neigborhood, weight_t originDistance, id_t previousVertex, bool found) {
+	bool createElement(id_t vertexId, std::optional<std::vector<id_t>> neigborhood, weight_t originDistance, std::optional<id_t> previousVertex, bool found) {
 		try {
 			table.push_back(DijkstraTableElement(vertexId, neigborhood, originDistance, previousVertex, found));
 
@@ -199,18 +204,23 @@ public:
 
 		// O vetor será um espelho do grafo, o id x do grafo ficará no id x daqui
 		if(noGrafo > convertionTable.size()){
-			for(int i = 0; i < noGrafo; i++) {
+			for(id_t i = 0; i < noGrafo; i++) {
 				convertionTable.push_back(-1);
 			}
 		}
 		convertionTable.at(noGrafo) = naDijkstraTable;
+		return;
 	}
 	
 	DijkstraTableElement at(id_t id) {
 		return table.at(id);
 	}
 
-	int size() {
+	std::optional<id_t> getPreviousVertex(id_t id) {
+		return table.at(id).getPreviousVertex();
+	}
+
+	size_t size() {
 		return table.size();
 	}
 
@@ -220,7 +230,7 @@ public:
  
 	id_t findByVertexId(id_t id) {
 		// Com o id do vértice, retorna aonde ele está
-		for(int i = 0; i < table.size(); i++) {
+		for(size_t i = 0; i < table.size(); i++) {
 			if(table.at(i).getVertexId() == id) return i;
 		}
 	}
@@ -293,7 +303,6 @@ public:
 
 	virtual bool               inserirVertice(std::string label)                 noexcept = 0;
 	virtual bool               removerVertice(id_t idx)                          noexcept = 0;
-	virtual bool               existeVertice (id_t idx)                          noexcept = 0;
 	virtual bool               inserirAresta (id_t A, id_t B, weight_t peso = 1) noexcept = 0;
 	virtual bool               removerAresta (id_t A, id_t B)                    noexcept = 0;
 	virtual std::vector<id_t>  getVertices   ()                                  noexcept = 0;
@@ -326,20 +335,29 @@ public:
 
 	DijkstraIGraphBFSIterGen djkbfs(id_t root) noexcept {
 		return DijkstraIGraphBFSIterGen(*this, root);
-	}
+	} // Iterador usado pelo Dijkstra
 
-	std::vector<std::vector<id_t>> Dijkstra(id_t origin) {
-		
-		//X Definir um vértice de Origem ^
+
+	std::vector<std::vector<id_t>> dijkstra(id_t origin) {
+		//          Definir um vértice de Origem ^
 		
 		//Criar tabela com todos os vértices e Campos: Distância do Vértice Origem; Vértice Pai; Caminho Encontrado (Y, N)
 		DijkstraTable dijkstraTable;
 		std::vector<id_t> allVertices = getVertices();
-		for(int i = 0; i < allVertices.size(); i++) {
-			dijkstraTable.createElement(allVertices.at(i), retornarVizinhos(i), 0, -1, 0);
-			dijkstraTable.createTabelaConversaoElement(i, allVertices.at(i));
+		
+		//Cria um id que representa o vazio
+		id_t fim = static_cast<id_t>(allVertices.size());
+
+		for(size_t i = 0; i < allVertices.size(); i++) {
+			dijkstraTable.createElement(allVertices.at(i), retornarVizinhos(i), std::numeric_limits<weight_t>::max(), std::nullopt, 0);
+			std::cout << std::numeric_limits<weight_t>::max();
+			if(dijkstraTable.at(i).getVertexId() == origin) dijkstraTable.at(i).update(0, fim);
+			//dijkstraTable.createTabelaConversaoElement(i, allVertices.at(i));
 		}
 
+
+		dijkstraTable.createElement(fim, std::nullopt, 0, std::nullopt, 1);
+		
 	/*	Para cada vizinho ($v$) do vértice atual ($u$):
 	1. Calcular a distância ($d$) dele ao início considerando o caminho atual $d(v) = d(u) + w(u, v)$
 	2. Se $d(u)$ atual for menor do que a $d(u)$ já salva, substituir todos os atributos pelos novos.
@@ -348,31 +366,59 @@ public:
 	*/
 	auto bfs = this->djkbfs(origin);
 
-	for (auto it = bfs.begin(); it != bfs.end(); ++it)
+	for (auto it = ++bfs.begin(); it != bfs.end(); ++it) // Viaja pela BFS
 	{
-		id_t distanciaAnterior = dijkstraTable.at(it.getCurrentNode()).getOriginDistance();
-		id_t distanciaCaminhoAtual = pesoAresta(it.getCurrentNode(), it.getPreviousNode()).value_or(999.0);
-		id_t pesoDaAresta = dijkstraTable.at(it.getPreviousNode()).getOriginDistance();
 
+		weight_t distanciaAnterior = dijkstraTable.at(it.getCurrentNode()).getOriginDistance();
+		weight_t distanciaCaminhoAtual = dijkstraTable.at(it.getPreviousNode()).getOriginDistance();
+		weight_t pesoDaAresta = pesoAresta(it.getPreviousNode(), it.getCurrentNode()).value_or(999.0);
+		std::cout << "\n\nvértice anterior: " << it.getPreviousNode();
+		std::cout << "\ndistanciaAnterior: " << distanciaAnterior << "\ndistanciaCaminhoAtual: " << distanciaCaminhoAtual << "\npesoDaAresta: " << pesoDaAresta;
 
-		if(distanciaAnterior > distanciaCaminhoAtual + distanciaAnterior) {
-			dijkstraTable.at(it.getCurrentNode()).update(distanciaCaminhoAtual + distanciaAnterior, it.getPreviousNode()); // d(v) = w(u, v)
+		if(distanciaAnterior > distanciaCaminhoAtual + pesoDaAresta) { // Se o novo caminho for melhor
+			dijkstraTable.at(it.getCurrentNode()).update(distanciaCaminhoAtual + pesoDaAresta, it.getPreviousNode()); // d(v) = w(u, v)
+			std::cout << "\nRealizando Update";
 		}
-
+		
+	}
 		// 5. Ao Encontrar o vértice destino, reconstruir ele utilizando os vértices pais e retornar o caminho
-		std::vector<std::vector<id_t>> caminhos(dijkstraTable.size());
-
-		for(int i = 0; i < dijkstraTable.size(); i++) {
-			for(int j = dijkstraTable.at(i).getVertexId(); j != origin; j = dijkstraTable.at(i).getPreviousVertex()) {
+		std::vector<std::vector<id_t>> caminhos;
+		caminhos.resize(dijkstraTable.size());
+		
+		for(size_t i = 0; i < dijkstraTable.size(); i++) {
+			
+			for(id_t j = dijkstraTable.at(i).getVertexId(); j != fim; j = dijkstraTable.getPreviousVertex(i).value_or(fim)) {
+				
 				caminhos[i].push_back(allVertices.at(j));
 			}
-			std::reverse(caminhos[i].begin(), caminhos[i].end());
+			
+			std::reverse(caminhos[i].begin(), caminhos[i].end()); // inverte o caminho, já que foi reconstruído de trás para frente
 		}
+		
+	return caminhos;
 
 	}
+
+	/*bool imprimeDijkstra(id_t origin) {
+		try {
+			std::vector<std::vector<id_t>> caminhos = dijkstra(origin);
+			for(int i = 0; i < caminhos.size(); i++){
+				std::cout << "\n" << i << "\t" << " -> |";
+				for(id_t j = 0; j < caminhos[i].size(); j++) {
+					std::cout << caminhos[i].at(j) << " | ";
+					
+				}
+			}
+			return false;
+
+		} catch (...) {
+			return true;
+		}
+	}*/
+
+
+
 //	IGraphBFSIter(this, false, , origem);
-
-	}
 };
 
 #endif // IGRAPH_HPP_

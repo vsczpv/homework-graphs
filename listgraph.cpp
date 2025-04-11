@@ -191,7 +191,8 @@ std::optional<std::vector<id_t>> ListGraph::retornarVizinhos(id_t idx) noexcept 
 
 std::vector<id_t> ListGraph::getVertices() noexcept {
     std::vector<id_t> allVertices;
-    for(int i = 0; i < verticesCount; i++) {
+    for(id_t i = 0; i < verticesCount; i++) {
         if(vertices.at(i).exists) allVertices.push_back(vertices.at(i).position);
     }
+    return allVertices;
 }

@@ -110,6 +110,7 @@ void menu(IGraph& grafo) {
 		        "   8. Retornar Vizinhos do Vértice\n"
 		        "   9. Imprimir Grafo\n"
 		        "  10. Limpar Tela\n\n: "
+				"  11. Imprimir Dijkstra\n\n"
 		        "   0. Sair\n";
 
 		int opcao = vin::ask<int>("=> ");
@@ -216,6 +217,29 @@ void menu(IGraph& grafo) {
 				std::cout << VT_CLEAR;
                 break;
             }
+
+			case 11: {
+
+				int origem  = vin::ask<int>("\nVertice de origem: ");
+				
+			try {
+				std::vector<std::vector<id_t>> caminhos = grafo.dijkstra(origem);
+				for(id_t i = 0; i < caminhos.size(); i++){
+					std::cout << "\n" << i << "\t" << " -> |";
+					for(id_t j = 0; j < caminhos[i].size(); j++) {
+						std::cout << caminhos[i].at(j) << " | ";
+						
+					}
+					std::cout << "\n\n";
+				}
+			} catch (const std::exception& e) {
+				std::cout << "\n\nERRO - ERRo no DIJKSTRA - ERRO\n\nERRO - ERRo no DIJKSTRA - ERRO";
+				std::cout << "\n Exceção " << e.what();
+			}
+			
+			
+			
+			}
         }
 
     }

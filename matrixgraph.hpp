@@ -85,6 +85,8 @@ public:
 	bool removerVertice(id_t idx)                          noexcept override;
 	bool inserirAresta (id_t A, id_t B, weight_t peso = 1) noexcept override;
 	bool removerAresta (id_t A, id_t B)                    noexcept override;
+	
+	std::vector<id_t> getVertices()                        noexcept override;
 
 	std::optional<std::string> labelVertice(id_t idx) noexcept override;
 
