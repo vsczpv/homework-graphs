@@ -107,14 +107,155 @@ public:
 	IGraphDFSIter end();
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class DijkstraTableElement {
+	private:
+		id_t              vertexId;
+		std::optional<std::vector<id_t>> neighborhood;
+		weight_t          originDistance;
+		id_t              previousVertex;
+		bool              found;
+
+	public:
+
+	id_t getVertexId() {
+		return vertexId;
+	}
+
+	weight_t getOriginDistance() {
+		return originDistance;
+	}
+
+	DijkstraTableElement(id_t vertexId, std::optional<std::vector<id_t>> neigborhood, weight_t originDistance, id_t previousVertex, bool found)
+	: vertexId(vertexId), neighborhood(neighborhood), originDistance(originDistance), previousVertex(previousVertex), found(found)
+	{};
+
+};
+
+
+class DijkstraTable {
+private:
+
+	std::vector<DijkstraTableElement> table;
+	std::vector<id_t> convertionTable;
+
+public:
+
+	DijkstraTable()
+	: table(), convertionTable()
+	{};
+
+	bool createElement(id_t vertexId, std::optional<std::vector<id_t>> neigborhood, weight_t originDistance, id_t previousVertex, bool found) {
+		try {
+			table.push_back(DijkstraTableElement(vertexId, neigborhood, originDistance, previousVertex, found));
+
+			return false;
+		} catch(...) {
+			return true;
+		}
+	}
+	
+	DijkstraTableElement at(id_t id) {
+		return table.at(id);
+	}
+
+	id_t findByVertexId(id_t id) {
+		// Com o id do vértice, retorna aonde ele está
+		for(int i = 0; i < table.size(); i++) {
+			if(table.at(i).getVertexId() == id) return i;
+		}
+	}
+
+};
+
+
+class DijkstraIGraphBFSIter {
+	IGraph&                   m_graph;
+	bool                      m_end;
+	std::unordered_set<id_t>& m_visits;
+	std::queue<id_t>          m_queue = {};
+	id_t                      m_current_node;
+	id_t                      m_previous_node;
+public:
+	DijkstraIGraphBFSIter(IGraph& parent, bool is_end, std::unordered_set<id_t>& visitstore, id_t root)
+		: m_graph       (parent)
+		, m_end         (is_end)
+		, m_visits      (visitstore)
+		, m_current_node(root)
+	{}
+
+	DijkstraIGraphBFSIter(const DijkstraIGraphBFSIter& rhs)
+		: m_graph        (rhs.m_graph)
+		, m_end          (rhs.m_end)
+		, m_visits       (rhs.m_visits)
+		, m_queue        (rhs.m_queue)
+		, m_current_node (rhs.m_current_node)
+	{}
+
+	id_t getCurrentNode() {
+		return m_current_node;
+	}
+	id_t getPreviousNode() {
+		return m_previous_node;
+	}
+
+	~DijkstraIGraphBFSIter() = default;
+
+	DijkstraIGraphBFSIter& operator=(const DijkstraIGraphBFSIter& rhs);
+
+	DijkstraIGraphBFSIter& operator++(); /* prefix */
+
+	id_t operator*() const;
+
+	friend bool operator==(const DijkstraIGraphBFSIter& lhs, const DijkstraIGraphBFSIter& rhs);
+	friend bool operator!=(const DijkstraIGraphBFSIter& lhs, const DijkstraIGraphBFSIter& rhs);
+
+	friend void swap(DijkstraIGraphBFSIter& lhs, DijkstraIGraphBFSIter& rhs);
+};
+
+class DijkstraIGraphBFSIterGen {
+	IGraph&                  m_graph;
+	std::unordered_set<id_t> m_visits = {};
+	id_t                     m_root;
+public:
+	DijkstraIGraphBFSIterGen(IGraph& parent, id_t root)
+		: m_graph(parent)
+		, m_root (root)
+	{}
+
+	DijkstraIGraphBFSIter begin();
+	DijkstraIGraphBFSIter end();
+};
+
+
 class IGraph {
 
 public:
 
-	virtual bool        inserirVertice(std::string label)                 noexcept = 0;
-	virtual bool        removerVertice(id_t idx)                          noexcept = 0;
-	virtual bool        inserirAresta (id_t A, id_t B, weight_t peso = 1) noexcept = 0;
-	virtual bool        removerAresta (id_t A, id_t B)                    noexcept = 0;
+	virtual bool               inserirVertice(std::string label)                 noexcept = 0;
+	virtual bool               removerVertice(id_t idx)                          noexcept = 0;
+	virtual bool               inserirAresta (id_t A, id_t B, weight_t peso = 1) noexcept = 0;
+	virtual bool               removerAresta (id_t A, id_t B)                    noexcept = 0;
+	virtual std::vector<id_t>  getVertices   ()                                  noexcept = 0;
 
 	virtual std::optional<std::string>
 	                    labelVertice  (id_t idx)                    noexcept = 0;
@@ -140,6 +281,46 @@ public:
 
 	IGraphDFSIterGen dfs(id_t root) noexcept {
 		return IGraphDFSIterGen(*this, root);
+	}
+
+	DijkstraIGraphBFSIterGen djkbfs(id_t root) noexcept {
+		return DijkstraIGraphBFSIterGen(*this, root);
+	}
+
+	std::vector<std::vector<id_t>> Dijkstra(id_t origin) {
+		
+		//X Definir um vértice de Origem ^
+		
+		//Criar tabela com todos os vértices e Campos: Distância do Vértice Origem; Vértice Pai; Caminho Encontrado (Y, N)
+		DijkstraTable dijkstraTable;
+		std::vector<id_t> allVertices = getVertices();
+		for(int i = 0; i < allVertices.size(); i++) {
+			dijkstraTable.createElement(i, retornarVizinhos(i), 0, -1, 0);
+		}
+
+	/*	Para cada vizinho ($v$) do vértice atual ($u$):
+	1. Calcular a distância ($d$) dele ao início considerando o caminho atual $d(v) = d(u) + w(u, v)$
+	2. Se $d(u)$ atual for menor do que a $d(u)$ já salva, substituir todos os atributos pelos novos.
+	3. Após visitar um nó´, marca-lo como visitado.
+	4. LOOP, repetir até que todos os nós tenham sido visitados ou o vértice destino tenha sido encontrado
+	*/
+	auto bfs = this->djkbfs(origin);
+
+	for (auto it = bfs.begin(); it != bfs.end(); ++it)
+	{
+
+		if(dijkstraTable.at(it.getCurrentNode()).getOriginDistance() > pesoAresta(it.getCurrentNode(), it.getPreviousNode()).value_or(999.0) + dijkstraTable.at(it.getPreviousNode()).getOriginDistance()) {
+			
+		}
+
+		// d  = verticePai.pesoaresta(u)
+		// if dijkstraTable.at()
+
+
+
+	}
+//	IGraphBFSIter(this, false, , origem);
+
 	}
 };
 
