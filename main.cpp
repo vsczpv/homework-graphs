@@ -31,10 +31,6 @@ void foo(IGraph& graph)
 void view_path(IGraph& graph, id_t rootid, std::deque<id_t> path)
 {
 
-//	id_t rootid = 1;
-
-//	auto outerdfsi = graph.dfs(rootid);
-
 	for (auto u : path)
 	{
 		std::stringstream graphtext;
@@ -43,12 +39,12 @@ void view_path(IGraph& graph, id_t rootid, std::deque<id_t> path)
 
 		if (graph.dir())
 		{
-			graphtext << "digraph out {\n";
+			graphtext << "strict digraph out {\n";
 			edge = "->";
 		}
 		else
 		{
-			graphtext << "graph out {\n";
+			graphtext << "strict graph out {\n";
 			edge = "--";
 		}
 
@@ -74,7 +70,15 @@ void view_path(IGraph& graph, id_t rootid, std::deque<id_t> path)
 			graphtext << lbl(v) << attrib << "\n";
 
 			if (nei) for (auto n : *nei)
-				graphtext << lbl(v) << edge << lbl(n) << "\n";
+			{
+
+				std::ostringstream weightos;
+
+				if (graph.pond())
+					weightos <<  " [label = " << *graph.pesoAresta(v, n) << "]";
+
+				graphtext << lbl(v) << edge << lbl(n) << std::move(weightos).str() << "\n";
+			}
 		}
 
 		graphtext << "}";
@@ -115,6 +119,9 @@ void menu(IGraph& grafo) {
 				"  12. Visualizar BFS\n"
 				"  13. Visualizar DFS\n"
 				"  14. Imprimir Caminhos Dijkstra\n"
+				"  15. Visualizar Grafo\n"
+				"  16. Visualizar Dijkstra\n"
+				"  17. Visualizar Caminhos Dijkstra\n"
 		        "   0. Sair\n";
 
 		int opcao = vin::ask<int>("=> ");
@@ -209,7 +216,6 @@ void menu(IGraph& grafo) {
 
             case 9: {
 				grafo.imprimeGrafo();
-//				view_path(grafo);
                 break;
             }
 
@@ -281,6 +287,52 @@ void menu(IGraph& grafo) {
 
 				break;
 			}
+
+			case 15:
+			{
+				id_t origem = vin::ask<int>("\nVertice de origem: ");
+
+				std::deque <id_t> path = { origem };
+
+				view_path(grafo, origem, path);
+
+				break;
+			}
+
+			case 17:
+			{
+
+				int origem = vin::ask<int>("\nVertice de origem: ");
+
+				auto cam = grafo.dijkstra_caminhos(origem);
+
+				std::cout << "Caminhos encontrados: ";
+
+				for (auto [k, v] : cam)
+					std::cout << k << " ";
+
+				int destino = vin::ask<int>("\nCaminho: ");
+
+				std::deque<id_t> select;
+
+				std::move(
+					begin(cam[destino]),
+					end  (cam[destino]),
+					back_inserter(select)
+				);
+
+				select.push_back(destino);
+
+				view_path(grafo, origem, select);
+
+				break;
+			}
+/*
+ * "  15. Visualizar Grafo\n"
+				"  16. Visualizar Dijkstra\n"
+				"  17. Visualizar Caminhos Dijkstra\n
+				*/
+
         }
 
     }
@@ -289,7 +341,10 @@ void menu(IGraph& grafo) {
 int main(int argc, char* argv[]) {
 
 	if (argc == 1)
+	{
+		std::cout << "Por favor forneça um arquivo." << std::endl;
 		return EXIT_FAILURE;
+	}
 
 	vin::compat_prologue();
 
