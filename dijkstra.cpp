@@ -1,8 +1,6 @@
-#include <ranges>
-
 #include "igraph.hpp"
 
-MyDijkstraTable::MyDijkstraTable(IGraph& graph)
+DijkstraTable::DijkstraTable(IGraph& graph)
 	: m_graph(graph)
 {
 	auto verts = graph.getVertices();
@@ -14,7 +12,7 @@ MyDijkstraTable::MyDijkstraTable(IGraph& graph)
 
 }
 
-void MyDijkstraTable::mark_distance(id_t a, id_t b)
+void DijkstraTable::mark_distance(id_t a, id_t b)
 {
 	if (m_prevs[a])
 	{
@@ -33,21 +31,40 @@ void MyDijkstraTable::mark_distance(id_t a, id_t b)
 	}
 };
 
-bool MyDijkstraTable::is_closed(id_t v) noexcept {
+bool DijkstraTable::is_closed(id_t v) noexcept {
 	return m_closed[v];
 }
 
-void MyDijkstraTable::set_closed(id_t v) noexcept {
+void DijkstraTable::set_closed(id_t v) noexcept {
 	m_closed[v] = true;
 }
 
-void MyDijkstraTable::reset_dist(id_t v) noexcept
+void DijkstraTable::reset_dist(id_t v) noexcept
 {
 	m_dists[v] = 0;
 }
 
+size_t DijkstraTable::nodecount(void) noexcept
+{
+	return m_dists.size();
+}
 
-void MyDijkstraTable::dbgprint() {
+std::vector <id_t> DijkstraTable::nodes(void) noexcept
+{
+	std::vector <id_t> res;
+
+	for (auto [k, _] : m_dists)
+		res.push_back(k);
+
+	return res;
+}
+
+std::optional<id_t> DijkstraTable::parent(id_t v)
+{
+	return m_prevs[v];
+}
+
+void DijkstraTable::dbgprint() {
 
 	for (auto v : m_graph.getVertices())
 		std::cout << v << "\t";
@@ -71,20 +88,19 @@ void MyDijkstraTable::dbgprint() {
 
 }
 
-MyDijkstraTable IGraph::my_dijktra(int origin) {
+DijkstraTable IGraph::dijkstra(id_t origin) {
 
-	MyDijkstraTable table(*this);
+	DijkstraTable table(*this);
 	table.reset_dist(origin);
 
 	for (auto sv : this->bfs(origin)) {
 
 		auto visit = this->retornarVizinhos(sv);
 
-		if (visit)
+		if (visit) for (auto vv : *visit)
 		{
-			auto open = *visit | std::views::filter([&table](id_t v){ return !table.is_closed(v); });
-			for (auto vv : open)
-				table.mark_distance(sv, vv);
+			if (table.is_closed(vv)) continue;
+			table.mark_distance(sv, vv);
 		}
 
 		table.set_closed(sv);;
@@ -92,3 +108,23 @@ MyDijkstraTable IGraph::my_dijktra(int origin) {
 
 	return table;
 }
+
+std::map<id_t, std::vector<id_t>> IGraph::dijkstra_caminhos(id_t origin)  {
+
+	auto table = this->dijkstra(origin);
+
+	std::map<id_t, std::vector<id_t>> caminhos;
+
+	for (auto k : table.nodes())
+	{
+		if (k == origin) continue;
+
+		std::optional<id_t> trail = k;
+		while ((trail = table.parent(*trail)))
+			caminhos[k].push_back(*trail);
+
+		std::reverse(caminhos[k].begin(), caminhos[k].end());
+	}
+
+	return caminhos;
+};

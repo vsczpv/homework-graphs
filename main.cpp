@@ -114,6 +114,7 @@ void menu(IGraph& grafo) {
 				"  11. Imprimir Dijkstra\n"
 				"  12. Visualizar BFS\n"
 				"  13. Visualizar DFS\n"
+				"  14. Imprimir Caminhos Dijkstra\n"
 		        "   0. Sair\n";
 
 		int opcao = vin::ask<int>("=> ");
@@ -222,22 +223,10 @@ void menu(IGraph& grafo) {
             }
 
 			case 11: {
-				int origem  = vin::ask<int>("\nVertice de origem: ");
-				
-				try {
-					std::vector<std::vector<id_t>> caminhos = grafo.dijkstra(origem);
-					for(id_t i = 0; i < caminhos.size(); i++){
-						std::cout << "\n" << i << "\t" << " -> |";
-						for(id_t j = 0; j < caminhos[i].size(); j++) {
-							std::cout << caminhos[i].at(j) << " | ";
 
-						}
-						std::cout << "\n\n";
-					}
-				} catch (const std::exception& e) {
-					std::cout << "\n\nERRO - ERRo no DIJKSTRA - ERRO\n\nERRO - ERRo no DIJKSTRA - ERRO";
-					std::cout << "\n Exceção " << e.what();
-				}
+				int origem = vin::ask<int>("\nVertice de origem: ");
+
+				grafo.dijkstra(origem).dbgprint();
 
 				break;
 			}
@@ -279,7 +268,16 @@ void menu(IGraph& grafo) {
 
 				int origem = vin::ask<int>("\nVertice de origem: ");
 
-				grafo.my_dijktra(origem).dbgprint();
+				auto cam = grafo.dijkstra_caminhos(origem);
+
+				for (auto [k, v] : cam)
+				{
+					std::cout << k << ":\t\t";
+					for (auto n : v) {
+						std::cout << n << " > ";
+					}
+					std::cout << k << std::endl;
+				}
 
 				break;
 			}

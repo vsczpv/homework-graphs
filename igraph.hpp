@@ -113,199 +113,16 @@ public:
 	IGraphDFSIter end();
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class DijkstraTableElement {
-	private:
-		id_t              vertexId;
-		std::optional<std::vector<id_t>> neighborhood;
-		weight_t          originDistance;
-		std::optional<id_t>              previousVertex;
-		bool              found;
-
-	public:
-
-	id_t getVertexId() {
-		return vertexId;
-	}
-
-	weight_t getOriginDistance() {
-		return originDistance;
-	}
-
-	std::optional<id_t> getPreviousVertex() {
-		return previousVertex;
-	}
-
-	DijkstraTableElement(id_t vertexId, std::optional<std::vector<id_t>> neigborhood, weight_t originDistance, std::optional<id_t> previousVertex, bool found)
-	: vertexId(vertexId), neighborhood(neighborhood), originDistance(originDistance), previousVertex(previousVertex), found(found)
-	{};
-
-	void update(weight_t originDistance, id_t previousVertex) {
-		this->originDistance = originDistance;
-		this->previousVertex = previousVertex;
-		found = true;
-	}
-
-	bool isfound() {
-		return found;
-	}
-
-	void find() {
-		found = true;
-	}
-
-};
-
+/* Dijkstra */
 
 class DijkstraTable {
-private:
-
-	std::vector<DijkstraTableElement> table;
-	std::vector<id_t> convertionTable;
-
-public:
-
-	DijkstraTable()
-	: table(), convertionTable()
-	{};
-
-	bool createElement(id_t vertexId, std::optional<std::vector<id_t>> neigborhood, weight_t originDistance, std::optional<id_t> previousVertex, bool found) {
-		try {
-			table.push_back(DijkstraTableElement(vertexId, neigborhood, originDistance, previousVertex, found));
-
-			return false;
-		} catch(...) {
-			return true;
-		}
-	}
-
-	void createTabelaConversaoElement(id_t naDijkstraTable, id_t noGrafo) {
-		if(noGrafo > 10000) { // Para não consumir memória de mais, vai só até o vértice 10000
-			return;
-		}
-
-		// O vetor será um espelho do grafo, o id x do grafo ficará no id x daqui
-		if(noGrafo > convertionTable.size()){
-			for(id_t i = 0; i < noGrafo; i++) {
-				convertionTable.push_back(-1);
-			}
-		}
-		convertionTable.at(noGrafo) = naDijkstraTable;
-		return;
-	}
-	
-	DijkstraTableElement at(id_t id) {
-		return table.at(id);
-	}
-
-	std::optional<id_t> getPreviousVertex(id_t id) {
-		return table.at(id).getPreviousVertex();
-	}
-
-	size_t size() {
-		return table.size();
-	}
-
-	void updateElement(id_t id, weight_t originDistance, id_t previousVertex) {
-		table.at(id).update(originDistance, previousVertex);
-	}
- 
-	id_t findByVertexId(id_t id) {
-		// Com o id do vértice, retorna aonde ele está
-		for(size_t i = 0; i < table.size(); i++) {
-			if(table.at(i).getVertexId() == id) return i;
-		}
-		assert(false); // TODO
-	}
-
-};
-
-
-class DijkstraIGraphBFSIter {
-	IGraph&                   m_graph;
-	bool                      m_end;
-	std::unordered_set<id_t>& m_visits;
-	std::queue<id_t>          m_queue = {};
-	id_t                      m_current_node;
-	id_t                      m_previous_node;
-public:
-	DijkstraIGraphBFSIter(IGraph& parent, bool is_end, std::unordered_set<id_t>& visitstore, id_t root)
-		: m_graph       (parent)
-		, m_end         (is_end)
-		, m_visits      (visitstore)
-		, m_current_node(root)
-	{}
-
-	DijkstraIGraphBFSIter(const DijkstraIGraphBFSIter& rhs)
-		: m_graph        (rhs.m_graph)
-		, m_end          (rhs.m_end)
-		, m_visits       (rhs.m_visits)
-		, m_queue        (rhs.m_queue)
-		, m_current_node (rhs.m_current_node)
-	{}
-
-	id_t getCurrentNode() {
-		return m_current_node;
-	}
-	id_t getPreviousNode() {
-		return m_previous_node;
-	}
-
-	~DijkstraIGraphBFSIter() = default;
-
-	DijkstraIGraphBFSIter& operator=(const DijkstraIGraphBFSIter& rhs);
-
-	DijkstraIGraphBFSIter& operator++(); /* prefix */
-
-	id_t operator*() const;
-
-	friend bool operator==(const DijkstraIGraphBFSIter& lhs, const DijkstraIGraphBFSIter& rhs);
-	friend bool operator!=(const DijkstraIGraphBFSIter& lhs, const DijkstraIGraphBFSIter& rhs);
-
-	friend void swap(DijkstraIGraphBFSIter& lhs, DijkstraIGraphBFSIter& rhs);
-};
-
-class DijkstraIGraphBFSIterGen {
-	IGraph&                  m_graph;
-	std::unordered_set<id_t> m_visits = {};
-	id_t                     m_root;
-public:
-	DijkstraIGraphBFSIterGen(IGraph& parent, id_t root)
-		: m_graph(parent)
-		, m_root (root)
-	{}
-
-	DijkstraIGraphBFSIter begin();
-	DijkstraIGraphBFSIter end();
-};
-
-class MyDijkstraTable {
 private:
 	std::map<id_t, weight_t>            m_dists  = {};
 	std::map<id_t, std::optional<id_t>> m_prevs  = {};
 	std::map<id_t, bool>                m_closed = {};
 	IGraph& m_graph;
 public:
-	MyDijkstraTable(IGraph& graph);
+	DijkstraTable(IGraph& graph);
 
 	void mark_distance(id_t a, id_t b);
 
@@ -313,8 +130,14 @@ public:
 	void set_closed(id_t v) noexcept;
 	void reset_dist(id_t v) noexcept;
 
+	size_t nodecount(void) noexcept;
+	std::vector <id_t> nodes(void) noexcept;
+	std::optional<id_t> parent(id_t v);
+
 	void dbgprint(void);
 };
+
+/* IGraph */
 
 class IGraph {
 
@@ -352,93 +175,9 @@ public:
 		return IGraphDFSIterGen(*this, root);
 	}
 
-	DijkstraIGraphBFSIterGen djkbfs(id_t root) noexcept {
-		return DijkstraIGraphBFSIterGen(*this, root);
-	} // Iterador usado pelo Dijkstra
+	DijkstraTable dijkstra(id_t origin);
+	std::map<id_t, std::vector<id_t>> dijkstra_caminhos(id_t origin);
 
-	MyDijkstraTable my_dijktra(int origin);
-
-	std::vector<std::vector<id_t>> dijkstra(id_t origin) {
-		//          Definir um vértice de Origem ^
-		
-		//Criar tabela com todos os vértices e Campos: Distância do Vértice Origem; Vértice Pai; Caminho Encontrado (Y, N)
-		DijkstraTable dijkstraTable;
-		std::vector<id_t> allVertices = getVertices();
-		
-		//Cria um id que representa o vazio
-		id_t fim = static_cast<id_t>(allVertices.size());
-
-		for(size_t i = 0; i < allVertices.size(); i++) {
-			dijkstraTable.createElement(allVertices.at(i), retornarVizinhos(i), std::numeric_limits<weight_t>::max(), std::nullopt, 0);
-			std::cout << std::numeric_limits<weight_t>::max();
-			if(dijkstraTable.at(i).getVertexId() == origin) dijkstraTable.at(i).update(0, fim);
-			//dijkstraTable.createTabelaConversaoElement(i, allVertices.at(i));
-		}
-
-
-		dijkstraTable.createElement(fim, std::nullopt, 0, std::nullopt, 1);
-		
-		/*	Para cada vizinho ($v$) do vértice atual ($u$):
-		1. Calcular a distância ($d$) dele ao início considerando o caminho atual $d(v) = d(u) + w(u, v)$
-		2. Se $d(u)$ atual for menor do que a $d(u)$ já salva, substituir todos os atributos pelos novos.
-		3. Após visitar um nó, marca-lo como visitado.
-		4. LOOP, repetir até que todos os nós tenham sido visitados ou o vértice destino tenha sido encontrado
-		*/
-		auto bfs = this->djkbfs(origin);
-
-		for (auto it = ++bfs.begin(); it != bfs.end(); ++it) // Viaja pela BFS
-		{
-
-			weight_t distanciaAnterior = dijkstraTable.at(it.getCurrentNode()).getOriginDistance();
-			weight_t distanciaCaminhoAtual = dijkstraTable.at(it.getPreviousNode()).getOriginDistance();
-			weight_t pesoDaAresta = pesoAresta(it.getPreviousNode(), it.getCurrentNode()).value_or(999.0);
-			std::cout << "\n\nvértice anterior: " << it.getPreviousNode();
-			std::cout << "\ndistanciaAnterior: " << distanciaAnterior << "\ndistanciaCaminhoAtual: " << distanciaCaminhoAtual << "\npesoDaAresta: " << pesoDaAresta;
-
-			if(distanciaAnterior > distanciaCaminhoAtual + pesoDaAresta) { // Se o novo caminho for melhor
-				dijkstraTable.at(it.getCurrentNode()).update(distanciaCaminhoAtual + pesoDaAresta, it.getPreviousNode()); // d(v) = w(u, v)
-				std::cout << "\nRealizando Update";
-			}
-
-		}
-		// 5. Ao Encontrar o vértice destino, reconstruir ele utilizando os vértices pais e retornar o caminho
-		std::vector<std::vector<id_t>> caminhos;
-		caminhos.resize(dijkstraTable.size());
-		
-		for(size_t i = 0; i < dijkstraTable.size(); i++) {
-			
-			for(id_t j = dijkstraTable.at(i).getVertexId(); j != fim; j = dijkstraTable.getPreviousVertex(i).value_or(fim)) {
-				
-				caminhos[i].push_back(allVertices.at(j));
-			}
-			
-			std::reverse(caminhos[i].begin(), caminhos[i].end()); // inverte o caminho, já que foi reconstruído de trás para frente
-		}
-		
-		return caminhos;
-
-	}
-
-	/*bool imprimeDijkstra(id_t origin) {
-		try {
-			std::vector<std::vector<id_t>> caminhos = dijkstra(origin);
-			for(int i = 0; i < caminhos.size(); i++){
-				std::cout << "\n" << i << "\t" << " -> |";
-				for(id_t j = 0; j < caminhos[i].size(); j++) {
-					std::cout << caminhos[i].at(j) << " | ";
-					
-				}
-			}
-			return false;
-
-		} catch (...) {
-			return true;
-		}
-	}*/
-
-
-
-//	IGraphBFSIter(this, false, , origem);
 };
 
 #endif // IGRAPH_HPP_
