@@ -56,12 +56,13 @@ IGraph* IGraphLoader::from_file(std::filesystem::path path) noexcept
 		id_t v0, v1;
 		weight_t pond;
 
-		iss >> v0 >> v1 >> pond;
+		iss >> v0 >> v1;
+		iss >> pond;
 
 		edges.push_back(std::make_tuple(v0, v1, pond));
 
-		verts.insert(v0);
-		verts.insert(v1);
+		assert(verts.insert(v0).first != verts.end());
+		assert(verts.insert(v1).first != verts.end());
 	}
 
 	for (auto v : verts)
@@ -69,8 +70,11 @@ IGraph* IGraphLoader::from_file(std::filesystem::path path) noexcept
 			goto rid_of_file;
 
 	for (auto e : edges)
-		if (res->inserirAresta(std::get<0>(e), std::get<1>(e), std::get<2>(e)))
+	{
+
+		if (res->inserirAresta(*res->labelidx(std::to_string(std::get<0>(e))), *res->labelidx(std::to_string(std::get<1>(e))), std::get<2>(e)))
 			goto rid_of_file;
+	}
 
 	file.close();
 

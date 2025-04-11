@@ -165,6 +165,8 @@ public:
 	virtual bool pond(void) noexcept = 0;
 	virtual bool dir (void) noexcept = 0;
 
+	virtual std::optional<id_t> labelidx(std::string label) noexcept = 0;
+
 	virtual ~IGraph() = default;
 
 	IGraphBFSIterGen bfs(id_t root) noexcept {

@@ -164,7 +164,7 @@ public:
         bool pond(void)                                             noexcept override;
         bool dir (void)                                             noexcept override;
 
-
+		std::optional<id_t> labelidx(std::string label) noexcept override;
 
 };
 

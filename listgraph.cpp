@@ -1,5 +1,22 @@
 #include "listgraph.hpp"
 
+std::optional<id_t> ListGraph::labelidx(std::string label) noexcept {
+	for (auto v : this->vertices)
+	{
+		if (v.label == label) return v.position;
+	}
+	return std::nullopt;
+}
+
+/*
+std::optional<id_t> labelidx(std::string label) {
+		for (id_t i = 0; i < labels.size(); i++)
+			if (this->labels[i].first && this->labels[i].second == label)
+				return i;
+		return std::nullopt;
+};
+*/
+
 bool ListGraph::pond(void) noexcept {
     return m_pond;
 }

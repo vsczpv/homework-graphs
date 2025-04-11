@@ -1,6 +1,11 @@
 #include "matrixgraph.hpp"
 #include <iostream>
 
+std::optional<id_t> MatrixGraph::labelidx(std::string label) noexcept
+{
+	return m_stg.labelidx(label);
+}
+
 bool MatrixGraph::pond(void) noexcept {
 	return m_pond;
 }
