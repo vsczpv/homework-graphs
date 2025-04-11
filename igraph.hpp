@@ -371,7 +371,16 @@ public:
 
 		weight_t distanciaAnterior = dijkstraTable.at(it.getCurrentNode()).getOriginDistance();
 		weight_t distanciaCaminhoAtual = dijkstraTable.at(it.getPreviousNode()).getOriginDistance();
-		weight_t pesoDaAresta = pesoAresta(it.getPreviousNode(), it.getCurrentNode()).value_or(999.0);
+		weight_t pesoDaAresta = pesoAresta(it.getPreviousNode(), it.getCurrentNode()).value_or(99999.0);
+
+		
+		if(it.getCurrentNode() == origin){
+			distanciaAnterior = 0;
+			distanciaCaminhoAtual = 0;
+			pesoDaAresta = 0;
+		}
+
+		
 		std::cout << "\n\nvértice anterior: " << it.getPreviousNode();
 		std::cout << "\ndistanciaAnterior: " << distanciaAnterior << "\ndistanciaCaminhoAtual: " << distanciaCaminhoAtual << "\npesoDaAresta: " << pesoDaAresta;
 
