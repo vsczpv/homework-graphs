@@ -145,23 +145,26 @@ public:
         {}
 
         
-        bool inserirVertice(std::string label)                 noexcept override;
-        bool removerVertice(id_t idx)                          noexcept override;
-        bool inserirAresta (id_t A, id_t B, weight_t peso) noexcept override;
-        bool removerAresta (id_t A, id_t B)                    noexcept override;
+        bool inserirVertice(std::string label)                      noexcept override;
+        bool removerVertice(id_t idx)                               noexcept override;
+        bool inserirAresta (id_t A, id_t B, weight_t peso)          noexcept override;
+        bool removerAresta (id_t A, id_t B)                         noexcept override;
+        
+        std::vector<id_t> getVertices()                             noexcept override;
+        std::optional<std::string> labelVertice(id_t idx)           noexcept override;
     
-        std::optional<std::string> labelVertice(id_t idx) noexcept override;
+        bool existeAresta(id_t A, id_t B)                           noexcept override;
     
-        bool existeAresta(id_t A, id_t B) noexcept override;
-    
-        std::optional<weight_t> pesoAresta(id_t A, id_t B) noexcept override;
+        std::optional<weight_t> pesoAresta(id_t A, id_t B)          noexcept override;
     
         std::optional<std::vector<id_t>> retornarVizinhos(id_t idx) noexcept override;
     
-        void imprimeGrafo(void) noexcept override;
+        void imprimeGrafo(void)                                     noexcept override;
     
-        bool pond(void) noexcept override;
-        bool dir (void) noexcept override;
+        bool pond(void)                                             noexcept override;
+        bool dir (void)                                             noexcept override;
+
+
 
 };
 
