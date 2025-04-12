@@ -134,6 +134,10 @@ public:
 	std::vector <id_t> nodes(void) noexcept;
 	std::optional<id_t> parent(id_t v);
 
+	std::optional<id_t> lowest_open(void) noexcept;
+
+	bool all_closed(void) noexcept;
+
 	void dbgprint(void);
 };
 

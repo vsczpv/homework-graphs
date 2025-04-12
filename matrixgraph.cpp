@@ -27,6 +27,8 @@ bool MatrixGraph::removerVertice(id_t idx) noexcept {
 
 bool MatrixGraph::inserirAresta(id_t A, id_t B, weight_t peso) noexcept {
 
+	if (!m_pond) peso = 1;
+
 	if (B > m_stg.max || A > m_stg.max)
 		return true;
 

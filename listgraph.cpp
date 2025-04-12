@@ -117,6 +117,8 @@ void ListGraph::imprimeGrafo() noexcept {
 bool ListGraph::inserirAresta(id_t A, id_t B, weight_t peso = 1) noexcept {
     try {
         
+		if (!m_pond) peso = 1;
+
         if (!vertices.at(A).exists) return false;
         if (!vertices.at(B).exists) return false;
 
