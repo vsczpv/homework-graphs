@@ -1,3 +1,6 @@
+// ninja -C build
+// .build/graphs in.txt
+
 
 #include <iostream>
 #include <vector>
@@ -122,6 +125,7 @@ void menu(IGraph& grafo) {
 				"  15. Visualizar Grafo\n"
 				"  16. Visualizar Dijkstra\n"
 				"  17. Visualizar Caminhos Dijkstra\n"
+				"  18. Visualizar Coloração Força Bruta\n"
 		        "   0. Sair\n";
 
 		int opcao = vin::ask<int>("=> ");
@@ -326,6 +330,15 @@ void menu(IGraph& grafo) {
 				view_path(grafo, origem, select);
 
 				break;
+			}
+
+			case 18:
+			{
+				BruitForce bruit_force = grafo.bruit_force();
+				bruit_force.color_graph();
+				bruit_force.print_output_list();
+				std::cout << "\n------------------------------------------------------------------------------\n";
+				std::cout << "Tempo de execução: " << bruit_force.get_burst_time() << "\n" << "Quantidade de cores: " << bruit_force.get_colors_number() << "\n";
 			}
 /*
  * "  15. Visualizar Grafo\n"
