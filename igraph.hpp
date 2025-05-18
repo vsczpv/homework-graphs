@@ -141,6 +141,60 @@ public:
 	void dbgprint(void);
 };
 
+
+/* Coloring */
+
+struct Color {
+	int r;
+	int g;
+	int b;
+
+	Color(int r, int g, int b)
+		: r(r)
+		, g(g)
+		, b(b)
+	{}
+	Color()
+		: r(0)
+		, g(0)
+		, b(0)
+	{}
+
+	int get_color() {
+		return (r << 16) | (g << 8) | b;
+	}
+};
+
+
+/* Bruit Force */
+
+
+class BruitForce {
+private:
+	IGraph& m_graph;
+	double  m_burst_time = 0; 
+	unsigned int	    m_colors_number  = 1;
+	
+	std::vector<std::pair<id_t, Color>> m_colors      = {}; // vector<id_cor, cor>
+	std::vector<std::pair<id_t, id_t>>  m_output_list = {}; // vector<id_vertice, id_cor>
+
+public:
+
+	BruitForce(IGraph& p_graph);
+
+	virtual BruitForce&                             color_graph()       noexcept; // Colorir o Grafo
+	virtual BruitForce&                             next_possibility()  noexcept; // Muda para a próxima possibilidade de cores
+	virtual bool                                    is_valid()          noexcept; // Verifica se tem vizinhos de mesma cor
+	virtual void                                    create_colors()     noexcept; // Preenche a tabela de cores
+	virtual void		                            print_output_list() noexcept; // Imprime a lista de saída
+
+	virtual double                                  get_burst_time()    noexcept; // Retorna o tempo de execução
+	virtual int		                                get_colors_number() noexcept; // Retorna o número de cores
+	virtual std::vector<std::pair<id_t, Color>>     get_colors()        noexcept; // Retorna a tabela de cores
+	virtual std::vector<std::pair<id_t, id_t>>      get_output_list()   noexcept; // Retorna a lista de saída
+
+};
+
 /* IGraph */
 
 class IGraph {
@@ -183,6 +237,10 @@ public:
 
 	DijkstraTable dijkstra(id_t origin);
 	std::map<id_t, std::vector<id_t>> dijkstra_caminhos(id_t origin);
+
+	BruitForce bruit_force() noexcept {
+		return BruitForce(*this);
+	}
 
 };
 
