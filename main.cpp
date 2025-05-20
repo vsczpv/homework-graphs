@@ -339,7 +339,9 @@ void menu(IGraph& grafo) {
 				bruit_force.print_output_list();
 				std::cout << "\n------------------------------------------------------------------------------\n";
 				std::cout << "Tempo de execução: " << bruit_force.get_burst_time() << "\n" << "Quantidade de cores: " << bruit_force.get_colors_number() << "\n";
+				break;
 			}
+
 /*
  * "  15. Visualizar Grafo\n"
 				"  16. Visualizar Dijkstra\n"
