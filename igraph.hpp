@@ -169,7 +169,7 @@ struct Color {
 /* Bruit Force */
 
 
-class BruitForce {
+class BrutForce {
 private:
 	IGraph& m_graph;
 	double  m_burst_time = 0; 
@@ -180,10 +180,10 @@ private:
 
 public:
 
-	BruitForce(IGraph& p_graph);
+	BrutForce(IGraph& p_graph);
 
-	virtual BruitForce&                             color_graph()       noexcept; // Colorir o Grafo
-	virtual BruitForce&                             next_possibility()  noexcept; // Muda para a próxima possibilidade de cores
+	virtual BrutForce&                             color_graph()       noexcept; // Colorir o Grafo
+	virtual BrutForce&                             next_possibility()  noexcept; // Muda para a próxima possibilidade de cores
 	virtual bool                                    is_valid()          noexcept; // Verifica se tem vizinhos de mesma cor
 	virtual void                                    create_colors()     noexcept; // Preenche a tabela de cores
 	virtual void		                            print_output_list() noexcept; // Imprime a lista de saída
@@ -238,8 +238,12 @@ public:
 	DijkstraTable dijkstra(id_t origin);
 	std::map<id_t, std::vector<id_t>> dijkstra_caminhos(id_t origin);
 
-	BruitForce bruit_force() noexcept {
-		return BruitForce(*this);
+	BrutForce bruit_force() noexcept {
+		return BrutForce(*this);
+	}
+
+	WelshPowell welsh_powell() noexcept {
+		return WelshPowell(*this);
 	}
 
 };
