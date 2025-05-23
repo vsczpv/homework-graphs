@@ -14,19 +14,17 @@ void NoOrder::next_coloration() noexcept
 
 	for (auto& v : m_control_table) {
 
-		id_t colorid;
+		if (v.second.closed())
+			continue;
+
+		id_t colorid = m_colors_number - 1;
 		bool success = false;
-		for (auto e : m_colors) {
-			colorid = e.first;
-			if (this->is_colorable(v.first, colorid))
-			{
-				success = true;
-				break;
-			}
-		}
+
+		if (this->is_colorable(v.first, colorid))
+			success = true;
 
 		if (success != true)
-			return;
+			continue;
 
 		v.second.color = colorid;
 	}
@@ -90,16 +88,16 @@ NoOrder& NoOrder::color_graph() noexcept
 	m_burst_time    = 0;
 
 	while (NoOrder::table_open(m_control_table)) {
-		this->reset();
+//		this->reset();
 		if (m_colors_number >= m_graph.getVertices().size())
 			abort();
 		m_colors_number++;
-		this->create_colors();
 		this->next_coloration();
 	}
 
 	m_burst_time = (double) clock() / CLOCKS_PER_SEC - time;
 
+	this->create_colors();
 	return *this;
 }
 

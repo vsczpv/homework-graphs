@@ -70,15 +70,14 @@ void DSATUR::next_coloration() noexcept
 {
 	while (true) {
 
-		if (DSATUR::table_closed(m_control_table))
+		if (m_closed == m_graph.getVertices().size())
 			return;
 
 		auto& v = m_control_table.front();
 
 		id_t colorid;
 		bool success = false;
-		for (auto e : m_colors) {
-			colorid = e.first;
+		for (colorid = 0; colorid < m_colors_number; colorid++) {
 			if (this->is_colorable(v.first, colorid))
 			{
 				success = true;
@@ -98,6 +97,8 @@ void DSATUR::next_coloration() noexcept
 		}
 
 		this->resort();
+
+		m_closed++;
 	}
 }
 
@@ -157,6 +158,7 @@ DSATUR& DSATUR::color_graph() noexcept
 
 	}
 
+	m_closed        = 0;
 	m_colors_number = 0;
 	m_burst_time    = 0;
 
@@ -165,15 +167,15 @@ DSATUR& DSATUR::color_graph() noexcept
 	});
 
 	while (DSATUR::table_open(m_control_table)) {
-		this->reset();
+//		this->reset();
 		if (m_colors_number >= m_graph.getVertices().size())
 			abort();
 		m_colors_number++;
-		this->create_colors();
 		this->next_coloration();
 	}
 
 	m_burst_time = (double) clock() / CLOCKS_PER_SEC - time;
+	this->create_colors();
 
 	return *this;
 }
@@ -213,6 +215,9 @@ int DSATUR::get_colors_number() noexcept
 
 void DSATUR::reset() noexcept
 {
+
+	m_closed = 0;
+
 	for (auto& e : m_control_table) {
 		e.second.color = std::nullopt;
 		e.second.satur = 0;
