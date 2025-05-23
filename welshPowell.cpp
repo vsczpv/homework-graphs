@@ -58,16 +58,15 @@ void WelshPowell::create_colors() noexcept {
 void WelshPowell::next_coloration() noexcept {
 
     
-    for(long unsigned int i = 0; i <= m_control_table.size(); i++) { // para cada vértice
-            std::cout << "for\n";
-        if(is_colorable(m_control_table.at(i).first, m_colors_number - 1)) {        // se não tem vizinho com a cor atual
-            std::cout << "is colorable\n";
-           m_control_table.at(i).second.color = m_colors_number - 1;               // colore
+    //std::cout << "FUNC\n";
+    for(auto v = m_control_table.begin(); v != m_control_table.end(); ) { // para cada vértice
+        if(is_colorable(v->first, m_colors_number - 1)) {        // se não tem vizinho com a cor atual
+           v->second.color = m_colors_number - 1;               // colore
 
-            m_final_table.insert(std::pair(m_control_table.at(i).first, m_control_table.at(i).second)); // adiciona na tabela de saída
-            std::cout << "1\n";
-            m_control_table.erase(m_control_table.begin() + i);                     // remove da tabela de controle
-            std::cout << "2\n";
+            m_final_table.insert(std::pair<id_t, WelshPowell::PowelTableElement>(v->first, v->second)); // adiciona na tabela de saída
+            v = m_control_table.erase(v);                     // remove da tabela de controle
+        } else {
+            ++v;
         }
     }
 
@@ -86,9 +85,9 @@ WelshPowell& WelshPowell::color_graph() noexcept {
     /* Reset graph list */
     auto verts = m_graph.getVertices();
     m_final_table.clear();
-    std::vector<std::pair<id_t, WelshPowell::PowelTableElement>> m_control_table = {};
+    m_control_table = {};
     for (auto v : verts){
-        m_control_table.push_back(std::pair(v, WelshPowell::PowelTableElement( m_graph.retornarVizinhos(v).value_or(std::vector<id_t> {}).size(), 0)));
+        m_control_table.push_back(std::pair<id_t, WelshPowell::PowelTableElement>(v, WelshPowell::PowelTableElement( m_graph.retornarVizinhos(v).value_or(std::vector<id_t> {}).size(), 0)));
     }
     m_colors_number = 0;
     m_burst_time    = 0;
@@ -97,46 +96,23 @@ WelshPowell& WelshPowell::color_graph() noexcept {
     
 
     /* Order by degree */
-    std::sort(m_control_table.begin(), m_control_table.end(), [](std::pair<id_t, WelshPowell::PowelTableElement>& a,std::pair<id_t, WelshPowell::PowelTableElement>& b) {
+    m_control_table.sort([](auto& a, auto& b) {
         return a.second.degree > b.second.degree;
     });
 
-    for(auto v : m_control_table) {
+    /*for(auto v : m_control_table) {
         std::cout << v.first << " -> " << v.second.degree << std::endl;
     }
-    std::cout << "----------------------------------------" << std::endl;
+    std::cout << "----------------------------------------" << std::endl;*/
 
 
 
     /* Color by Welsh Powell */
-    if(m_control_table.size() == 0) {
-        m_burst_time = 0;
-        return *this;
-    } else {
-        m_colors_number++;
-    }
 
-
-    while(true) {
-        for(auto v = m_control_table.begin(); v != m_control_table.end(); v++) { // para cada vértice
-                std::cout << "for\n";
-            if(is_colorable(v->first, m_colors_number - 1)) {        // se não tem vizinho com a cor atual
-                std::cout << "is colorable\n";
-                v->second.color = m_colors_number - 1;               // colore
-
-                m_final_table.insert(std::pair(v->first, v->second)); // adiciona na tabela de saída
-                std::cout << "1\n";
-                m_control_table.erase(v);                     // remove da tabela de controle
-                std::cout << "2\n";
-            }
-        }
-        
-        if(m_control_table.empty()) { // finaliza se tabela controle vazia
-                std::cout << "is empty\n";
-            break;
-        }
+    while(!m_control_table.empty()) {
         m_colors_number++; // cria nova cor
-        std::cout << "colors ++\n";
+        
+        next_coloration();
     }
 
 
