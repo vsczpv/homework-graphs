@@ -146,7 +146,7 @@ DSATUR& DSATUR::color_graph() noexcept
 
 	for (auto v : verts) {
 
-		auto degree = m_graph.retornarVizinhos(v).value_or({}).size();
+		auto degree = m_graph.retornarVizinhos(v).value_or(std::vector<id_t>{}).size();
 		m_control_table.push_back(std::make_pair(
 			v,
 			DSATUR::DSATURTableElement {
