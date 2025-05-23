@@ -23,6 +23,7 @@ executable('graphs',
            'brutForce.cpp',
            'welshPowell.cpp',
            'dsatur.cpp',
+           'noorder.cpp',
             dependencies: [ncurses_dep]
 )
 

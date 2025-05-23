@@ -291,6 +291,51 @@ public:
 
 };
 
+class NoOrder {
+private:
+	IGraph&      m_graph;
+	double       m_burst_time = 0;
+	unsigned int m_colors_number = 0;
+
+	std::map<id_t, Color> m_colors = {};
+
+public:
+
+	struct NoOrderTableElement {
+		std::optional<id_t> color;
+		bool open(void) const {
+			return this->color.has_value() == false;
+		};
+		bool closed(void) const {
+			return !open();
+		}
+	};
+
+private:
+
+	std::vector<std::pair<id_t, NoOrderTableElement>> m_control_table = {};
+
+	static NoOrder::NoOrderTableElement* table_contains(std::vector<std::pair<id_t, NoOrder::NoOrderTableElement>>& t, id_t id) noexcept;
+	static bool table_closed(std::vector<std::pair<id_t, NoOrder::NoOrderTableElement>>& t) noexcept;
+	static bool table_open(std::vector<std::pair<id_t, NoOrder::NoOrderTableElement>>& t) noexcept;
+
+	void reset(void) noexcept;
+
+public:
+
+	NoOrder(IGraph& parent) : m_graph(parent) {}
+
+	NoOrder& color_graph()   noexcept;
+	void next_coloration()   noexcept;
+	void create_colors()     noexcept;
+	bool is_colorable(id_t,id_t)      noexcept;
+
+	double  get_burst_time() noexcept;
+	int  get_colors_number() noexcept;
+	void print_output_list() noexcept;
+
+};
+
 /* IGraph */
 
 class IGraph {
@@ -346,6 +391,9 @@ public:
 		return DSATUR(*this);
 	}
 
+	NoOrder noorder() noexcept {
+		return NoOrder(*this);
+	}
 };
 
 #endif // IGRAPH_HPP_
