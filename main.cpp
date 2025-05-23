@@ -127,6 +127,8 @@ void menu(IGraph& grafo) {
 				"  17. Visualizar Caminhos Dijkstra\n"
 				"  18. Visualizar Coloração Força Bruta\n"
 				"  19. Visualizar Coloração Welsh Powell\n"
+				"  20. Visualizar Coloração DSATUR\n"
+				"  21. Visualizar Coloração Sem Ordem\n"
 		        "   0. Sair\n";
 
 		int opcao = vin::ask<int>("=> ");
@@ -355,11 +357,24 @@ void menu(IGraph& grafo) {
 				break;
 			}
 
-/*
- * "  15. Visualizar Grafo\n"
-				"  16. Visualizar Dijkstra\n"
-				"  17. Visualizar Caminhos Dijkstra\n
-				*/
+			case 20:
+			{
+				DSATUR ds = grafo.dsatur();
+				ds.color_graph();
+				ds.print_output_list();
+				std::cout << "\n------------------------------------------------------------------------------\n";
+				std::cout << "Tempo de execução: " << ds.get_burst_time() << "\n" << "Quantidade de cores: " << ds.get_colors_number() << "\n";
+				break;
+			}
+
+			case 21:
+			{
+				NoOrder no = grafo.noorder();
+				no.color_graph();
+				no.print_output_list();
+				std::cout << "\n------------------------------------------------------------------------------\n";
+				std::cout << "Tempo de execução: " << no.get_burst_time() << "\n" << "Quantidade de cores: " << no.get_colors_number() << "\n";
+			}
 
         }
 

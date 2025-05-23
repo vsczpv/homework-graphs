@@ -20,8 +20,10 @@ executable('graphs',
            'igraphiter.cpp',
            'igraphloader.cpp',
            'dijkstra.cpp',
-           'BrutForce.cpp',
+           'brutForce.cpp',
            'welshPowell.cpp',
+           'dsatur.cpp',
+           'noorder.cpp',
             dependencies: [ncurses_dep]
 )
 
