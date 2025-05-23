@@ -4,6 +4,8 @@
 
 #include <string>
 #include <tuple>
+#include <time.h>
+#include <cstdlib>
 
 /* Desdefinir macros do Visual Studio */
 #undef max
@@ -162,6 +164,8 @@ template long int    vin::ask<long int>    (std::string);
  */
 void vin::compat_prologue (bool setup_io = false)
 {
+
+	srand(time(nullptr));
 
 #ifdef WIN32
 

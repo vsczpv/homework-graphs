@@ -14,6 +14,7 @@
 #include <queue>
 #include <stack>
 #include <map>
+#include <set>
 
 #include <iostream>
 
@@ -237,6 +238,59 @@ public:
 
 };
 
+class DSATUR {
+private:
+	IGraph&      m_graph;
+	double       m_burst_time = 0;
+	unsigned int m_colors_number = 0;
+
+	std::map<id_t, Color> m_colors = {};
+
+public:
+	struct DSATURTableElement {
+		int degree;
+		int satur;
+		std::optional<id_t> color;
+		bool operator<(const DSATURTableElement& other) const {
+			return this->degree < other.degree;
+		};
+		bool open(void) const {
+			return this->color.has_value() == false;
+		};
+		bool closed(void) const {
+			return !open();
+		}
+	};
+
+private:
+	std::vector<std::pair<id_t, DSATURTableElement>> m_control_table = {};
+
+	static DSATUR::DSATURTableElement* table_contains(std::vector<std::pair<id_t, DSATUR::DSATURTableElement>>& t, id_t id) noexcept;
+	static bool table_closed(std::vector<std::pair<id_t, DSATUR::DSATURTableElement>>& t) noexcept;
+	static bool table_open(std::vector<std::pair<id_t, DSATUR::DSATURTableElement>>& t) noexcept;
+
+	void resort(void) noexcept;
+
+	void redo_satur(id_t vertex) noexcept;
+
+	void reset(void) noexcept;
+
+public:
+
+	DSATUR(IGraph& parent) : m_graph(parent) {}
+
+	DSATUR& color_graph()            noexcept;
+	void    next_coloration()        noexcept;
+	void    create_colors()          noexcept;
+	bool    is_colorable(id_t, id_t) noexcept;
+
+	double  get_burst_time()         noexcept;
+	int     get_colors_number()      noexcept;
+	void print_output_list()         noexcept;
+//	const std::vector<std::pair<id_t, DSATURTableElement>>& get_output_list() const noexcept;
+
+};
+
 /* IGraph */
 
 class IGraph {
@@ -286,6 +340,10 @@ public:
 
 	WelshPowell welsh_powell() noexcept {
 		return WelshPowell(*this);
+	}
+
+	DSATUR dsatur() noexcept {
+		return DSATUR(*this);
 	}
 
 };
