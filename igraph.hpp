@@ -4,6 +4,7 @@
 #include <string>
 #include <cassert>
 #include <vector>
+#include <list>
 #include <limits>
 #include <algorithm>      // para usar std::reverse
 #include <unordered_set>
@@ -171,12 +172,12 @@ struct Color {
 
 class BrutForce {
 private:
-	IGraph& m_graph;
-	double  m_burst_time = 0; 
-	unsigned int	    m_colors_number  = 1;
+	IGraph&                               m_graph;
+	double                                m_burst_time = 0; 
+	unsigned int                          m_colors_number  = 1;
 	
-	std::vector<std::pair<id_t, Color>> m_colors      = {}; // vector<id_cor, cor>
-	std::vector<std::pair<id_t, id_t>>  m_output_list = {}; // vector<id_vertice, id_cor>
+	std::vector<std::pair<id_t, Color>>   m_colors      = {}; // vector<id_cor, cor>
+	std::vector<std::pair<id_t, id_t>>    m_output_list = {}; // vector<id_vertice, id_cor>
 
 public:
 
@@ -198,30 +199,32 @@ public:
 
 class WelshPowell {
 private:
-	IGraph& m_graph;
-	double  m_burst_time = 0; 
-	unsigned int m_colors_number  = 1;
-	unsigned int m_number_of_colored_vertices = 0;
+	IGraph&         m_graph;
+	double          m_burst_time = 0; 
+	unsigned int    m_colors_number  = 0;
+	unsigned int    m_number_of_colored_vertices = 0;
 	
 	std::vector<std::pair<id_t, Color>> m_colors = {}; // vector<id_cor, cor>
 
 	struct PowelTableElement {
-		id_t vertex_id;
 		int  degree;
 		id_t  color;
-		PowelTableElement(id_t vertex_id, int degree, id_t color)
-			: vertex_id(vertex_id)
-			, degree(degree)
+
+		PowelTableElement(weight_t degree, id_t color)
+			: degree(degree)
 			, color(color)
 		{}
 	};
-	std::vector<PowelTableElement>            m_table = {}; // vector<id_vertice, id_cor>
+	std::map<id_t, PowelTableElement> m_final_table = {}; // vector<id_vertice, id_cor>
+
+	std::list<std::pair<id_t, PowelTableElement>> m_control_table = {}; // tabela controle
 
 public:
 
 	WelshPowell(IGraph& p_graph);
 
 	virtual WelshPowell&                            color_graph()             noexcept; // Colorir o Grafo
+	virtual void                                    next_coloration()         noexcept; // passar com uma nova cor
 	virtual void                                    create_colors()           noexcept; // Preenche a tabela de cores
 	virtual void		                            print_output_list()       noexcept; // Imprime a lista de saída
 	virtual bool                                    is_colorable(id_t, id_t)  noexcept; // Verifica se tem vizinhos de mesma cor
@@ -229,7 +232,7 @@ public:
 	virtual double                                  get_burst_time()          noexcept; // Retorna o tempo de execução
 	virtual int		                                get_colors_number()       noexcept; // Retorna o número de cores
 	virtual std::vector<std::pair<id_t, Color>>     get_colors()              noexcept; // Retorna a tabela de cores
-	virtual std::vector<PowelTableElement>          get_output_list()         noexcept; // Retorna a lista de saída
+	virtual std::map<id_t, PowelTableElement>       get_output_list()         noexcept; // Retorna a lista de saída
 
 
 };
