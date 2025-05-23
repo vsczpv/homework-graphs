@@ -195,6 +195,45 @@ public:
 
 };
 
+
+class WelshPowell {
+private:
+	IGraph& m_graph;
+	double  m_burst_time = 0; 
+	unsigned int m_colors_number  = 1;
+	unsigned int m_number_of_colored_vertices = 0;
+	
+	std::vector<std::pair<id_t, Color>> m_colors = {}; // vector<id_cor, cor>
+
+	struct PowelTableElement {
+		id_t vertex_id;
+		int  degree;
+		id_t  color;
+		PowelTableElement(id_t vertex_id, int degree, id_t color)
+			: vertex_id(vertex_id)
+			, degree(degree)
+			, color(color)
+		{}
+	};
+	std::vector<PowelTableElement>            m_table = {}; // vector<id_vertice, id_cor>
+
+public:
+
+	WelshPowell(IGraph& p_graph);
+
+	virtual WelshPowell&                            color_graph()             noexcept; // Colorir o Grafo
+	virtual void                                    create_colors()           noexcept; // Preenche a tabela de cores
+	virtual void		                            print_output_list()       noexcept; // Imprime a lista de saída
+	virtual bool                                    is_colorable(id_t, id_t)  noexcept; // Verifica se tem vizinhos de mesma cor
+
+	virtual double                                  get_burst_time()          noexcept; // Retorna o tempo de execução
+	virtual int		                                get_colors_number()       noexcept; // Retorna o número de cores
+	virtual std::vector<std::pair<id_t, Color>>     get_colors()              noexcept; // Retorna a tabela de cores
+	virtual std::vector<PowelTableElement>          get_output_list()         noexcept; // Retorna a lista de saída
+
+
+};
+
 /* IGraph */
 
 class IGraph {

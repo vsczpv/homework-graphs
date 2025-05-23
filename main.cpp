@@ -126,6 +126,7 @@ void menu(IGraph& grafo) {
 				"  16. Visualizar Dijkstra\n"
 				"  17. Visualizar Caminhos Dijkstra\n"
 				"  18. Visualizar Coloração Força Bruta\n"
+				"  19. Visualizar Coloração Welsh Powell\n"
 		        "   0. Sair\n";
 
 		int opcao = vin::ask<int>("=> ");
@@ -334,11 +335,19 @@ void menu(IGraph& grafo) {
 
 			case 18:
 			{
-				BruitForce bruit_force = grafo.bruit_force();
+				BrutForce bruit_force = grafo.bruit_force();
 				bruit_force.color_graph();
 				bruit_force.print_output_list();
 				std::cout << "\n------------------------------------------------------------------------------\n";
 				std::cout << "Tempo de execução: " << bruit_force.get_burst_time() << "\n" << "Quantidade de cores: " << bruit_force.get_colors_number() << "\n";
+				
+				break;
+			}
+			case 19:
+			{
+				WelshPowell wp = grafo.welsh_powell();
+				wp.color_graph();
+
 				break;
 			}
 
