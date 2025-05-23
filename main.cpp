@@ -347,6 +347,10 @@ void menu(IGraph& grafo) {
 			{
 				WelshPowell wp = grafo.welsh_powell();
 				wp.color_graph();
+				wp.print_output_list();
+				std::cout << "\n------------------------------------------------------------------------------\n";
+				std::cout << "Tempo de execução: " << wp.get_burst_time() << "\n" << "Quantidade de cores: " << wp.get_colors_number() << "\n";
+				
 
 				break;
 			}
