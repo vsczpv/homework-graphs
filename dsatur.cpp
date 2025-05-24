@@ -2,10 +2,52 @@
 
 void DSATUR::create_colors() noexcept {
 
+	/*
 	m_colors.clear();
 	for (unsigned int i = 0; i < m_colors_number; i++) {
 		m_colors[i] = Color(0,0,0);
 	}
+	*/
+
+	   // Gera uma lista de cores com uma tamanho expoente de 2 que seja suficiente para armazenar todas as cores.
+    m_colors.clear();
+
+    Color color_aux(0, 0, 0);
+    unsigned int passo_div_r = 0, passo_div_g = 0 , passo_div_b = 0;
+
+    while(true) {
+
+        static int i = 0;
+        switch (i % 3) {
+            case 0:
+                passo_div_r++;
+                break;
+            case 1:
+                passo_div_g++;
+                break;
+            case 2:
+                passo_div_b++;
+                break;
+        }
+        i++;
+        if((passo_div_r + 1) * (passo_div_g + 1) * (passo_div_b + 1) > m_colors_number) break;
+    };
+    unsigned int cont = 0;
+    for (unsigned int r = 0x00; r <= passo_div_r; r++) {
+        if (r) color_aux.r = r * (0xff / passo_div_r); else color_aux.r = 0x00;
+
+        for (unsigned int g = 0x00; g <= passo_div_g; g++) {
+            if(g) color_aux.g = g * (0xff / passo_div_g); else color_aux.g = 0x00;
+
+            for (unsigned int b = 0x00; b <= passo_div_b; b++) {
+                if (b) color_aux.b = b * (0xff / passo_div_b); else color_aux.b = 0x00;
+
+//                m_colors.push_back(std::make_pair(cont, color_aux));
+				m_colors[cont] = color_aux;
+                cont++;
+            }
+        }
+    }
 
 }
 
@@ -213,10 +255,28 @@ double DSATUR::get_burst_time() noexcept {
 
 void DSATUR::print_output_list() noexcept
 {
+	/*
 	std::cout << std::dec;
 	for (auto& v : m_control_table) {
 		std::cout << v.first << "\t" << " -> " << (v.second.color.has_value() ? std::to_string(*v.second.color) : "ø") << std::endl;
 	}
+	*/
+	for (auto v : m_control_table) {
+		std::cout << std::dec;
+        std::cout << v.first << "\t" << " -> ";
+
+        std::cout.width(6);
+        std::cout.fill('0');
+		if (v.second.color)
+		{
+//			printf("\033[38;2;%");
+			std::cout << std::hex << m_colors[*v.second.color].get_color() << std::endl;
+		}
+		else
+			std::cout << "ø" << std::endl;
+    }
+
+    std::cout << std::dec;
 }
 
 int DSATUR::get_colors_number() noexcept
