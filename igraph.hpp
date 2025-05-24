@@ -18,6 +18,9 @@
 
 #include <iostream>
 
+#define STDOUT_BUFFER_SZ (16 * 4096)
+extern char stdout_buffer[STDOUT_BUFFER_SZ];
+
 using weight_t = float;
 using id_t     = uint32_t;
 

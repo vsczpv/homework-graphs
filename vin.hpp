@@ -38,7 +38,7 @@ namespace vin
 	constexpr bool NO_CURSES = false;
 
 	/* Funções de compatibilidade */
-	void compat_prologue(bool setup_io);
+	void compat_prologue(bool setup_io = false);
 	void compat_epilogue(void);
 
 	/* Wrapper envolta do ncurses/conio.h */
@@ -162,7 +162,8 @@ template long int    vin::ask<long int>    (std::string);
  * Função de compatibilidade
  * Ativa a formatação VT do CMD.exe (Windows), e o ncurses em modo filter (*NIX)
  */
-void vin::compat_prologue (bool setup_io = false)
+#ifdef CODE_VIN_IMPLEMENT
+void vin::compat_prologue (bool setup_io)
 {
 
 	srand(time(nullptr));
@@ -197,10 +198,12 @@ void vin::compat_prologue (bool setup_io = false)
 
 }
 
+
 /*
  * Função de compatibilidade
  * Desativa o ncurses (*NIX)
  */
+
 void vin::compat_epilogue (void)
 {
 
@@ -215,10 +218,14 @@ void vin::compat_epilogue (void)
 	return;
 }
 
+
+
 int vin::fakecurses::getc (void)
 {
 	return getch ();
 }
+
+
 
 void vin::fakecurses::refr (void)
 {
@@ -231,11 +238,14 @@ void vin::fakecurses::refr (void)
 
 }
 
+
 std::string vin::vt_pos(int x, int y)
 {
 	x += 1, y += 1;
 	return "\033[" + std::to_string(y) + ";" + std::to_string(x) + "H";
 }
+
+#endif // CODE_VIN_IMPLEMENT
 
 #endif // CODE_VIN_HPP_
 

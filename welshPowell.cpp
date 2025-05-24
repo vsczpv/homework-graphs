@@ -2,8 +2,8 @@
 
 #include "igraph.hpp"
 
-
 #include <time.h>
+#include <stdio.h>
 
 
 #define NSEC_PER_SEC    (1000000000)
@@ -109,13 +109,21 @@ WelshPowell& WelshPowell::color_graph() noexcept {
 
     /* Color by Welsh Powell */
 
+	puts("");
+
+	setvbuf(stdout, NULL, _IONBF, 0);
+
     while(!m_control_table.empty()) {
         m_colors_number++; // cria nova cor
-        
+
+		printf("Qtd. cores atual: %04u   \r", m_colors_number);
+
         next_coloration();
     }
 
+    puts("");
 
+	setvbuf(stdout, stdout_buffer, _IOLBF, STDOUT_BUFFER_SZ);
     
     
     /* Get time to execute */
@@ -142,12 +150,15 @@ bool WelshPowell::is_colorable(id_t vertex, id_t color) noexcept {
 void WelshPowell::print_output_list() noexcept {
     
     for (auto v : m_final_table) {
+		std::cout << std::dec;
         std::cout << v.first << "\t" << " -> ";
         
         std::cout.width(6);
         std::cout.fill('0');
         std::cout << std::hex << m_colors.at(v.second.color).second.get_color() << std::endl;
     }
+
+    std::cout << std::dec;
 }
 
 

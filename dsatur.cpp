@@ -166,13 +166,24 @@ DSATUR& DSATUR::color_graph() noexcept
 		return a.second.degree > b.second.degree;
 	});
 
+	puts("");
+
+	setvbuf(stdout, NULL, _IONBF, 0);
+
 	while (DSATUR::table_open(m_control_table)) {
 //		this->reset();
 		if (m_colors_number >= m_graph.getVertices().size())
 			abort();
 		m_colors_number++;
+
+		printf("Qtd. cores atual: %04u   \r", m_colors_number);
+
 		this->next_coloration();
 	}
+
+	puts("");
+
+	setvbuf(stdout, stdout_buffer, _IOLBF, STDOUT_BUFFER_SZ);
 
 	m_burst_time = (double) clock() / CLOCKS_PER_SEC - time;
 	this->create_colors();

@@ -19,6 +19,7 @@ BrutForce& BrutForce::next_possibility() noexcept {
             m_output_list.at(v.first).second = 0;
 
             if(v.first == m_output_list.back().first){
+
                 m_colors_number++;
 
             }
@@ -96,11 +97,26 @@ BrutForce& BrutForce::color_graph() noexcept {
     }
     m_colors_number++;
 
+	puts("");
+
+	setvbuf(stdout, NULL, _IONBF, 0);
+
+	size_t ct = 0;
+
     /* Color the Graph */
     while (!is_valid()) {
         next_possibility();
+
+		ct++;
+		if (ct % 1000 == 0)
+			printf("Qtd. cores atual: %04u v. tentativa %08lu mil\r", m_colors_number, ct / 1000);
     }
+
+    printf("Qtd. cores atual: %04u v. tentativa %08lu\r", m_colors_number, ct);
+
+    setvbuf(stdout, stdout_buffer, _IOLBF, STDOUT_BUFFER_SZ);
     
+	puts("");
     
     /* Get time to execute */
     m_burst_time = ( ((double) clock()) / CLOCKS_PER_SEC) - time1;

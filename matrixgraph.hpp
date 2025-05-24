@@ -50,10 +50,21 @@ struct MatrixGraphStorage {
 			}
 		return true;
 	}
+
+	std::map<std::string, id_t> labelidx_cache = {};
+
 	std::optional<id_t> labelidx(std::string label) {
+		if (labelidx_cache.contains(label))
+		{
+			return labelidx_cache[label];
+		}
+		else
 		for (id_t i = 0; i < labels.size(); i++)
 			if (this->labels[i].first && this->labels[i].second == label)
+			{
+				labelidx_cache[label] = i;
 				return i;
+			}
 		return std::nullopt;
 	};
 	MatrixGraphStorage(int max) {

@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 
+#define CODE_VIN_IMPLEMENT
 #include "vin.hpp"
 
 #include "igraph.hpp"
@@ -17,6 +18,8 @@
 #include <unistd.h>
 
 using namespace std;
+
+char stdout_buffer[STDOUT_BUFFER_SZ];
 
 void foo(IGraph& graph)
 {
