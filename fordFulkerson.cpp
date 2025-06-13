@@ -9,7 +9,6 @@
 
 FordFulkerson::FordFulkerson(IGraph& graph, id_t source, id_t sink)
         : m_graph(graph)
-        , m_residual_graph(std::map<id_t, std::map<id_t, int>>())
         , m_residual(*std::make_unique<ListGraph>(true, true)) // Inicializa o grafo residual
         , m_source(source)
         , m_sink(sink)
@@ -44,14 +43,6 @@ std::optional<FordFulkerson> FordFulkerson::find_max_flow() noexcept {
 int FordFulkerson::get_minimum_flow() noexcept {
     //encontra a aresta de menor capacidade no grafo residual
     float min_flow = INT_MAX;
-
-    for (const auto& [node, edges] : m_residual_graph) {
-        for (const auto& [destination, capacity] : edges) {
-            if (capacity < min_flow) {
-                min_flow = capacity;
-            }
-        }
-    }
     for (const auto& node : m_residual.getVertices()) {
         for (const auto& aresta : m_residual.retornarVizinhos(node).value_or(std::vector<id_t>())) {
             float peso = m_residual.pesoAresta(node, aresta).value_or(INT_MAX);
@@ -66,18 +57,12 @@ int FordFulkerson::get_minimum_flow() noexcept {
 void FordFulkerson::generate_residual_graph() noexcept {/* CRIE RESIDUAL GRAPH COM UM BFS, PARA QUE ELE INICIE EM DIREÇÃO SOURCE -> SINK (CRÍTICO)*/
     std::vector<id_t> vertices = m_graph.getVertices();
     for(auto vertex_id : vertices) {
-        m_residual_graph.insert(std::pair<id_t,std::map<id_t, int>>(vertex_id, std::map<id_t, int>()));
         m_residual.inserirVertice(std::to_string(vertex_id)); // insere o vértice no grafo residual
         std::optional<std::vector<id_t>> arestas = m_graph.retornarVizinhos(vertex_id);
         for(auto aresta : *arestas) {
             std::optional<weight_t> peso = m_graph.pesoAresta(vertex_id, aresta);
 
             if (peso) {
-                if(m_residual_graph.find(aresta) != m_residual_graph.end() && m_residual_graph[aresta].find(vertex_id) != m_residual_graph[aresta].end()) {
-                    m_residual_graph[vertex_id][aresta] = 0; // se a inversa existe, trata ela como inversa
-                } else {
-                    m_residual_graph[vertex_id].insert(std::pair<id_t, int>(aresta, *peso)); // se não existe, trata como principal
-                }
                 if(!m_residual.existeVertice(aresta)) { // se o destino existe, é porque as arestas dele também existem. 
                     m_residual.inserirAresta(vertex_id, aresta, 0); // Insere como aresta inversa
                 } else m_residual.inserirAresta(vertex_id, aresta, *peso);
@@ -108,14 +93,6 @@ bool FordFulkerson::exists_augmenting_path() noexcept {
 }
 
 void FordFulkerson::diminish_capacity(int flow) noexcept {
-    
-    if(m_residual_graph.find(m_source) == m_residual_graph.end()) return;
-    if(m_residual_graph.find(m_source)->second.find(m_sink) == m_residual_graph.find(m_source)->second.end()) return;
-
-    m_residual_graph.find(m_source)->second.find(m_sink)->second -= flow; // Diminui a capacidade da aresta entre source e sink
-
-    if (m_residual_graph[m_source][m_sink] < 0) m_residual_graph[m_source][m_sink] = 0; // Evita capacidade negativa
-    return;
 
     if(m_residual.existeVertice(m_source) && m_residual.existeAresta(m_source, m_sink)) {
         weight_t peso_final = m_residual.pesoAresta(m_source, m_sink).value_or(0) - flow;
@@ -128,12 +105,6 @@ void FordFulkerson::diminish_capacity(int flow) noexcept {
 
 
 void FordFulkerson::increment_capacity(int flow) noexcept {
-    
-    if(m_residual_graph.find(m_source) == m_residual_graph.end()) return;
-    if(m_residual_graph.find(m_source)->second.find(m_sink) == m_residual_graph.find(m_source)->second.end()) return;
-
-    m_residual_graph.find(m_source)->second.find(m_sink)->second += flow; // Diminui a capacidade da aresta entre source e sink
-
     
     if(m_residual.existeVertice(m_source) && m_residual.existeAresta(m_source, m_sink)) {
         weight_t peso_final = m_residual.pesoAresta(m_source, m_sink).value_or(0) + flow;

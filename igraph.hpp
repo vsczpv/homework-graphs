@@ -365,7 +365,6 @@ class FordFulkerson {
 private:
 	IGraph& m_graph;
 	IGraph& m_residual;
-	std::map<id_t, std::map<id_t, int>> m_residual_graph; // vetor de vértices, que são vetores de capacidade de arestas
 	id_t m_source;
 	id_t m_sink;
 	int Solution = 0; // fluxo máximo
