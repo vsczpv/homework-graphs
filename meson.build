@@ -6,7 +6,7 @@ project(
     default_options : [
         'buildtype=debug',
         'optimization=0',
-        'cpp_std=gnu++23',
+        'cpp_std=gnu++20',
     ],
     meson_version: '>= 0.60.0',
 )
@@ -24,6 +24,7 @@ executable('graphs',
            'welshPowell.cpp',
            'dsatur.cpp',
            'noorder.cpp',
+           'fordFulkerson.cpp',
             dependencies: [ncurses_dep]
 )
 

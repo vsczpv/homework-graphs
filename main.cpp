@@ -129,6 +129,7 @@ void menu(IGraph& grafo) {
 				"  19. Visualizar Coloração Welsh Powell\n"
 				"  20. Visualizar Coloração DSATUR\n"
 				"  21. Visualizar Coloração Sem Ordem\n"
+				"  22. Visualizar Fluxo Máximo\n"
 		        "   0. Sair\n";
 
 		int opcao = vin::ask<int>("=> ");
@@ -374,6 +375,15 @@ void menu(IGraph& grafo) {
 				no.print_output_list();
 				std::cout << "\n------------------------------------------------------------------------------\n";
 				std::cout << "Tempo de execução: " << no.get_burst_time() << "\n" << "Quantidade de cores: " << no.get_colors_number() << "\n";
+				break;
+			}
+
+			case 22:
+			{
+				id_t origin = vin::ask<int>("\nVertice de origem: ");
+				id_t sink = vin::ask<int>("\nVertice sorvedor: ");
+				FordFulkerson maxFlow = grafo.ford_fulkerson(origin, sink);
+
 			}
 
         }

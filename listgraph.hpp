@@ -144,7 +144,8 @@ public:
             m_pond      (pond)
         {}
 
-        
+        bool existeVertice (id_t A)                                 noexcept override;
+        bool existeVertice (id_t A)                                 noexcept override;
         bool inserirVertice(std::string label)                      noexcept override;
         bool removerVertice(id_t idx)                               noexcept override;
         bool inserirAresta (id_t A, id_t B, weight_t peso)          noexcept override;

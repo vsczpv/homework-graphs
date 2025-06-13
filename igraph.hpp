@@ -175,7 +175,8 @@ class BrutForce {
 private:
 	IGraph&                               m_graph;
 	double                                m_burst_time = 0; 
-	unsigned int                          m_colors_number  = 1;
+	unsigned int                          m_colors_number = 1;
+
 	
 	std::vector<std::pair<id_t, Color>>   m_colors      = {}; // vector<id_cor, cor>
 	std::vector<std::pair<id_t, id_t>>    m_output_list = {}; // vector<id_vertice, id_cor>
@@ -184,8 +185,8 @@ public:
 
 	BrutForce(IGraph& p_graph);
 
-	virtual BrutForce&                             color_graph()       noexcept; // Colorir o Grafo
-	virtual BrutForce&                             next_possibility()  noexcept; // Muda para a próxima possibilidade de cores
+	virtual BrutForce&                             color_graph()        noexcept; // Colorir o Grafo
+	virtual BrutForce&                             next_possibility()   noexcept; // Muda para a próxima possibilidade de cores
 	virtual bool                                    is_valid()          noexcept; // Verifica se tem vizinhos de mesma cor
 	virtual void                                    create_colors()     noexcept; // Preenche a tabela de cores
 	virtual void		                            print_output_list() noexcept; // Imprime a lista de saída
@@ -336,12 +337,65 @@ public:
 
 };
 
+
+
+/* fluxo máximo*/
+class ResidualElement {
+	id_t origin;
+	id_t destination;
+	weight_t capacity;
+public:
+	ResidualElement(id_t origin, id_t destination, weight_t capacity)
+		: origin(origin)
+		, destination(destination)
+		, capacity(capacity)
+	{}
+	id_t get_origin() const noexcept {
+		return origin;
+	}
+	id_t get_destination() const noexcept {
+		return destination;
+	}
+	weight_t get_capacity() const noexcept {
+		return capacity;
+	}
+};
+
+class FordFulkerson {
+private:
+	IGraph& m_graph;
+	IGraph& m_residual;
+	std::map<id_t, std::map<id_t, int>> m_residual_graph; // vetor de vértices, que são vetores de capacidade de arestas
+	id_t m_source;
+	id_t m_sink;
+	int Solution = 0; // fluxo máximo
+
+public:
+	FordFulkerson(IGraph& graph, id_t source, id_t sink);
+
+	std::optional<FordFulkerson>        find_max_flow()        noexcept;
+	std::optional<FordFulkerson>        find_augmenting_path() noexcept;
+	int                                 get_minimum_flow()     noexcept;
+	std::optional<std::vector<id_t>>    get_augment_path()     noexcept;
+	bool                                iterator(id_t source, id_t sink, std::map<id_t, id_t>& pai)             noexcept;
+	void diminish_capacity(int flow) noexcept;
+	void increment_capacity (int flow) noexcept;
+	void generate_residual_graph() noexcept;
+	bool exists_augmenting_path() noexcept;
+
+
+
+
+
+};
+
 /* IGraph */
 
 class IGraph {
 
 public:
 
+	virtual bool               existeVertice (id_t A)                            noexcept = 0;
 	virtual bool               inserirVertice(std::string label)                 noexcept = 0;
 	virtual bool               removerVertice(id_t idx)                          noexcept = 0;
 	virtual bool               inserirAresta (id_t A, id_t B, weight_t peso = 1) noexcept = 0;
@@ -393,6 +447,9 @@ public:
 
 	NoOrder noorder() noexcept {
 		return NoOrder(*this);
+	}
+	FordFulkerson ford_fulkerson(id_t source, id_t sink) noexcept {
+		return FordFulkerson(*this, source, sink);
 	}
 };
 

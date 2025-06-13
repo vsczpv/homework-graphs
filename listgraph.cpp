@@ -212,3 +212,11 @@ std::vector<id_t> ListGraph::getVertices() noexcept {
     }
     return allVertices;
 }
+
+bool ListGraph::existeVertice (id_t A) noexcept {
+    if(A > vertices.size() && vertices.at(A).exists) {
+        return true;
+    } else {
+        return false;
+    }
+}
