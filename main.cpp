@@ -129,6 +129,7 @@ void menu(IGraph& grafo) {
 				"  19. Visualizar Coloração Welsh Powell\n"
 				"  20. Visualizar Coloração DSATUR\n"
 				"  21. Visualizar Coloração Sem Ordem\n"
+				"  22. Fluxo Máximo (Fork-Fukerson)\n"
 		        "   0. Sair\n";
 
 		int opcao = vin::ask<int>("=> ");
@@ -374,8 +375,30 @@ void menu(IGraph& grafo) {
 				no.print_output_list();
 				std::cout << "\n------------------------------------------------------------------------------\n";
 				std::cout << "Tempo de execução: " << no.get_burst_time() << "\n" << "Quantidade de cores: " << no.get_colors_number() << "\n";
+				break;
 			}
 
+			case 22:
+			{
+				if ( (grafo.pond() && grafo.dir()) == false )
+				{
+					std::cout << "Grafo não é ponderado e direcionado, abortando." << std::endl;
+				}
+
+				else
+				{
+					id_t F = vin::ask<id_t>("\nVertice Fonte: ");
+					id_t S = vin::ask<id_t>("\nVertice Sorvedor: ");
+
+					FordFn fn = FordFn(grafo, F, S);
+
+					weight_t max = fn.max();
+
+					std::cout << "O fluxo máximo do grafo é " << max << "." << std::endl;
+				}
+
+				break;
+			}
         }
 
     }

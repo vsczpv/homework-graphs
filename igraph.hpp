@@ -14,6 +14,7 @@
 #include <queue>
 #include <stack>
 #include <map>
+#include <memory>
 #include <set>
 
 #include <iostream>
@@ -338,6 +339,28 @@ public:
 
 };
 
+/* Ford Fuckerson, Son of Fucker, CEO of Chevrolet */
+class FordFn {
+
+private:
+
+	std::unique_ptr<IGraph> m_residual;
+	std::set<id_t>          m_visited;
+
+	id_t m_F;
+	id_t m_S;
+
+	weight_t m_curr_max = 0;
+
+public:
+	FordFn(IGraph& original, id_t F, id_t S) noexcept;
+
+	std::optional<weight_t> process_path(id_t curr) noexcept;
+
+	bool    step(void) noexcept;
+	weight_t max(void) noexcept;
+};
+
 /* IGraph */
 
 class IGraph {
@@ -396,6 +419,10 @@ public:
 	NoOrder noorder() noexcept {
 		return NoOrder(*this);
 	}
+
+	virtual IGraph* duplicate(void ) const noexcept = 0;
 };
+
+void view_path(IGraph& graph, id_t rootid, std::deque<id_t> path);
 
 #endif // IGRAPH_HPP_
