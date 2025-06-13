@@ -355,10 +355,22 @@ private:
 public:
 	FordFn(IGraph& original, id_t F, id_t S) noexcept;
 
-	std::optional<weight_t> process_path(id_t curr) noexcept;
+	std::optional<weight_t> process_path(id_t curr, weight_t cw) noexcept;
 
 	bool    step(void) noexcept;
 	weight_t max(void) noexcept;
+};
+
+
+
+class Optimizer {
+private:
+	std::unique_ptr<IGraph> m_graph;
+	std::vector<std::tuple<id_t, id_t, weight_t>> m_edges;
+
+public:
+	Optimizer(IGraph& graph) noexcept;
+	IGraph* optimize(id_t F, id_t S) noexcept;
 };
 
 /* IGraph */
@@ -383,6 +395,21 @@ public:
 
 	virtual std::optional<std::vector<id_t>>
 	                   retornarVizinhos(id_t idx)                   noexcept = 0;
+
+	std::vector<std::tuple<id_t, id_t, weight_t>> getArestas(void) noexcept {
+		auto res = std::vector<std::tuple<id_t, id_t, weight_t>> {};
+
+		auto verts = this->getVertices();
+
+		for (auto v : verts) {
+			auto nei = *this->retornarVizinhos(v);
+			for (auto n : nei) {
+				res.push_back(std::make_tuple(v, n, *this->pesoAresta(v, n)));
+			}
+		}
+
+		return res;
+	}
 
 	virtual void imprimeGrafo(void) noexcept = 0;
 
