@@ -409,6 +409,8 @@ void menu(IGraph& grafo) {
 					std::cout << std::get<0>(a) << " -> " << std::get<1>(a) << ": " << std::get<2>(a) << std::endl;
 				}
 
+				std::cout << "total: " << ars.size() << std::endl;
+
 				break;
 			}
 			case 24:
@@ -421,9 +423,9 @@ void menu(IGraph& grafo) {
 
 				std::cout << "Melhor Fluxo: " << FordFn(*bg, F, S).max() << std::endl;
 
-				std::deque <id_t> path = { F };
-
-				view_path(*bg, F, path);
+//				std::deque <id_t> path = { F };
+//
+//				view_path(*bg, F, path);
 
 				delete bg;
 

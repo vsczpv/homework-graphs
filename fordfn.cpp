@@ -15,7 +15,9 @@ std::optional<weight_t> FordFn::process_path(id_t curr, weight_t cw) noexcept
 	auto nei = m_residual->retornarVizinhos(curr);
 
 	if (!nei || nei->size() == 0)
+	{
 		return std::nullopt;
+	}
 
 	for (auto n : *nei) {
 		std::optional<weight_t> res = std::nullopt;
@@ -66,7 +68,7 @@ std::optional<weight_t> FordFn::process_path(id_t curr, weight_t cw) noexcept
 bool FordFn::step(void) noexcept
 {
 
-	std::deque <id_t> path = { m_F };
+//	std::deque <id_t> path = { m_F };
 
 //	view_path(*m_residual, m_F, path);
 //

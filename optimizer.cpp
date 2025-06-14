@@ -9,36 +9,36 @@ IGraph* Optimizer::optimize(id_t F, id_t S) noexcept
 {
 
 	weight_t baseline = FordFn(*m_graph, F, S).max();
-//	std::cout << baseline << std::endl;
+
+	std::cout << "Tentativa atual FM = " << baseline << std::endl;
 
 	std::vector<weight_t> scores;
-//	id_t aaa = 0;
+
+	id_t cy = 0;
 	for (auto& m : m_edges) {
+		std::cout << "Ciclo " << cy++ << std::endl;
 		auto [a, b, w] = m;
 
-		auto clone = m_graph->duplicate();
+		auto old_w = w;
 
-		auto ia = clone->pesoAresta(b, a);
+		auto ia = m_graph->pesoAresta(b, a);
 		auto ia_v = ia ? *ia : 0;
 
 		w += ia_v;
 
-		clone->removerAresta(a, b);
-		clone->inserirAresta(b, a, w);
+		m_graph->removerAresta(a, b);
+		m_graph->inserirAresta(b, a, w);
 
-		auto score = FordFn(*clone, F, S).max();
+		auto score = FordFn(*m_graph, F, S).max();
 
 		scores.push_back(score);
 
-//		m_graph->removerAresta(a, b);
-//		m_graph->inserirAresta(b, a, w);
-//		auto score = FordFn(*m_graph, F, S).max();
-//
-//		std::cout << "X: " << aaa << " " << score << std::endl;
-//		scores.push_back(score);
-//		m_graph->removerAresta(b, a);
-//		m_graph->inserirAresta(a, b, w);
-//		aaa++;
+		m_graph->removerAresta(b, a);
+		m_graph->inserirAresta(a, b, old_w);
+
+		if (ia)
+			m_graph->inserirAresta(b, a, *ia);
+
 	}
 
 	id_t     h_id = -1;
@@ -51,15 +51,11 @@ IGraph* Optimizer::optimize(id_t F, id_t S) noexcept
 		}
 	}
 
-//	std::cout << highest << " " << baseline << " " << h_id << std::endl;
-
 	if (highest <= baseline) {
 		return m_graph.release();
 	}
 
 	auto [a, b, w] = m_edges[h_id];
-
-//	std::cout << "Y: " << FordFn(*m_graph, F, S).max() << std::endl;
 
 	auto ia = m_graph->pesoAresta(b, a);
 	auto ia_v = ia ? *ia : 0;
@@ -68,8 +64,6 @@ IGraph* Optimizer::optimize(id_t F, id_t S) noexcept
 
 	m_graph->removerAresta(a, b);
 	m_graph->inserirAresta(b, a, w);
-
-//	std::cout << "Z: " << FordFn(*m_graph, F, S).max() << std::endl;
 
 	*this = Optimizer(*m_graph);
 
