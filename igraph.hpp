@@ -246,6 +246,8 @@ private:
 
 	std::map<id_t, Color> m_colors = {};
 
+	size_t       m_closed = 0;
+
 public:
 	struct DSATURTableElement {
 		int degree;
