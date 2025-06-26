@@ -19,7 +19,7 @@ std::optional<weight_t> FordFn::process_path(id_t curr) noexcept
 
 	for (auto n : *nei) {
 		std::optional<weight_t> res = std::nullopt;
-		if (m_visited.contains(n) == false) {
+		if (m_visited.find(n) == m_visited.end()) {
 			if (n == m_S)
 			{
 				m_visited.insert(n);
