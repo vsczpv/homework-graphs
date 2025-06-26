@@ -24,6 +24,7 @@ executable('graphs',
            'welshPowell.cpp',
            'dsatur.cpp',
            'noorder.cpp',
+           'fordfn.cpp',
             dependencies: [ncurses_dep]
 )
 

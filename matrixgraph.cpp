@@ -153,3 +153,14 @@ std::vector<id_t> MatrixGraph::getVertices() noexcept {
 			allVertices.push_back(i);
     return allVertices;
 }
+
+IGraph* MatrixGraph::duplicate(void) const noexcept {
+	auto copy = new MatrixGraph(m_pond, m_dir);
+
+	copy->m_stg.max    = this->m_stg.max;
+	copy->m_stg.labels = this->m_stg.labels;
+
+	memcpy(copy->m_stg.M, this->m_stg.M, MATRIX_MAX * MATRIX_MAX);
+
+	return copy;
+}

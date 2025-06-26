@@ -212,3 +212,13 @@ std::vector<id_t> ListGraph::getVertices() noexcept {
     }
     return allVertices;
 }
+
+IGraph* ListGraph::duplicate(void) const noexcept {
+	auto copy = new ListGraph(m_pond, m_dir);
+
+	copy->verticesCount = this->verticesCount;
+	copy->freeSlots     = this->freeSlots;
+	copy->vertices      = this->vertices;
+
+	return copy;
+}

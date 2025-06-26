@@ -103,6 +103,7 @@ public:
 
 	std::optional<id_t> labelidx(std::string label) noexcept override;
 
+	IGraph* duplicate(void) const noexcept override;
 };
 
 #endif // MATRIX_GRAPH_HPP_
