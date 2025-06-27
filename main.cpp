@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 
+#define VIN_HPP_IMPL
 #include "vin.hpp"
 
 #include "igraph.hpp"
@@ -132,6 +133,7 @@ void menu(IGraph& grafo) {
 				"  22. Fluxo Máximo (Fork-Fukerson)\n"
 				"  23. Imprimir Arestas\n"
 				"  24. Otimizar Fluxo Máximo\n"
+				"  25. AGM Kruskal\n"
 		        "   0. Sair\n";
 
 		int opcao = vin::ask<int>("=> ");
@@ -429,6 +431,12 @@ void menu(IGraph& grafo) {
 
 				delete bg;
 
+				break;
+			}
+			case 25:
+			{
+				auto kr = grafo.kruskal();
+				kr.solve();
 				break;
 			}
         }

@@ -16,7 +16,7 @@ IGraph* Optimizer::optimize(id_t F, id_t S) noexcept
 
 	id_t cy = 0;
 	for (auto& m : m_edges) {
-		std::cout << "Ciclo " << cy++ << std::endl;
+//		std::cout << "Ciclo " << cy++ << std::endl;
 		auto [a, b, w] = m;
 
 		auto old_w = w;

@@ -373,6 +373,21 @@ public:
 	IGraph* optimize(id_t F, id_t S) noexcept;
 };
 
+class Krustal {
+private:
+	IGraph& m_graph;
+
+	std::vector<std::tuple<id_t, id_t, weight_t>> m_S;
+	std::deque <std::tuple<id_t, id_t, weight_t>> m_Q;
+	std::vector<std::unordered_set<id_t>>         m_F;
+
+public:
+	Krustal(IGraph& parent) noexcept;
+
+	void solve(void) noexcept;
+	void print(void) noexcept;
+};
+
 /* IGraph */
 
 class IGraph {
@@ -399,11 +414,17 @@ public:
 	std::vector<std::tuple<id_t, id_t, weight_t>> getArestas(void) noexcept {
 		auto res = std::vector<std::tuple<id_t, id_t, weight_t>> {};
 
+		std::unordered_set<id_t> seenv;
 		auto verts = this->getVertices();
 
 		for (auto v : verts) {
 			auto nei = *this->retornarVizinhos(v);
+			if (this->dir() == false)
+				seenv.insert(v);
 			for (auto n : nei) {
+				if (this->dir() == false)
+					if (seenv.contains(n))
+						continue;
 				res.push_back(std::make_tuple(v, n, *this->pesoAresta(v, n)));
 			}
 		}
@@ -445,6 +466,10 @@ public:
 
 	NoOrder noorder() noexcept {
 		return NoOrder(*this);
+	}
+
+	Krustal kruskal() noexcept {
+		return Krustal(*this);
 	}
 
 	virtual IGraph* duplicate(void ) const noexcept = 0;

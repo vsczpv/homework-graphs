@@ -128,6 +128,8 @@ T vin::ask(std::string prompt)
 	return val;
 }
 
+#ifdef VIN_HPP_IMPL
+
 template int         vin::ask<int>         (std::string);
 template std::size_t vin::ask<std::size_t> (std::string);
 template double      vin::ask<double>      (std::string);
@@ -236,6 +238,8 @@ std::string vin::vt_pos(int x, int y)
 	x += 1, y += 1;
 	return "\033[" + std::to_string(y) + ";" + std::to_string(x) + "H";
 }
+
+#endif // VIN_HPP_IMPL
 
 #endif // CODE_VIN_HPP_
 
