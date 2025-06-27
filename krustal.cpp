@@ -43,6 +43,7 @@ void Krustal::print(void) noexcept {
 
 void Krustal::solve(void) noexcept {
 
+	weight_t peso_total = 0;
 	int a = 0;
 	while (m_Q.size() != 0 && m_F.size() != 1) {
 		printf("=== %i\n", a++);
@@ -78,9 +79,12 @@ void Krustal::solve(void) noexcept {
 		m_F[aux_a].insert(m_F[aux_b].begin(), m_F[aux_b].end());
 		m_F.erase(m_F.begin() + aux_b);
 
+		peso_total += std::get<2>(q);
+
 		m_S.push_back(q);
 	}
 
 	printf("=== %i\n", a++);
 	Krustal::print();
+	std::cout << "Peso total: " << peso_total << std::endl;
 }
