@@ -15,16 +15,16 @@ BrutForce& BrutForce::next_possibility() noexcept {
 
     for (auto v : m_output_list) {
         // vai somando 1 a um número m_colors_number-ecimal, o qual o id de cor de cada vértice é uma casa do número
-        if (v.second == m_colors_number - 1) {
-            m_output_list.at(v.first).second = 0;
+        if (v.second == m_colors_number - 1) {            // se for a cor máxima
+            m_output_list.at(v.first).second = 0;         // vira zero
 
-            if(v.first == m_output_list.back().first){
-                m_colors_number++;
+            if(v.first == m_output_list.back().first){    // se for o último vvértice
+                m_colors_number++;                        // cria uma nova cor
 
             }
         }
         else {
-            m_output_list.at(v.first).second = v.second + 1;
+            m_output_list.at(v.first).second = v.second + 1; // se não for a cor máxima, soma 1
             break;
         }
     }

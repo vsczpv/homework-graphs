@@ -58,13 +58,12 @@ void WelshPowell::create_colors() noexcept {
 void WelshPowell::next_coloration() noexcept {
 
     
-    //std::cout << "FUNC\n";
     for(auto v = m_control_table.begin(); v != m_control_table.end(); ) { // para cada vértice
-        if(is_colorable(v->first, m_colors_number - 1)) {        // se não tem vizinho com a cor atual
-           v->second.color = m_colors_number - 1;               // colore
+        if(is_colorable(v->first, m_colors_number - 1)) {                 // se não tem vizinho com a cor atual
+           v->second.color = m_colors_number - 1;                         // colore
 
             m_final_table.insert(std::pair<id_t, WelshPowell::PowelTableElement>(v->first, v->second)); // adiciona na tabela de saída
-            v = m_control_table.erase(v);                     // remove da tabela de controle
+            v = m_control_table.erase(v);                                 // remove da tabela de controle
         } else {
             ++v;
         }

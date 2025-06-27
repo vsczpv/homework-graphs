@@ -1,5 +1,5 @@
 // ninja -C build
-// .build/graphs in.txt
+// ./build/graphs in.txt
 
 
 #include <iostream>
