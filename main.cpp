@@ -130,6 +130,7 @@ void menu(IGraph& grafo) {
 				"  20. Visualizar Coloração DSATUR\n"
 				"  21. Visualizar Coloração Sem Ordem\n"
 				"  22. Fluxo Máximo (Fork-Fukerson)\n"
+				"  26. Arvore Geradora Mínima (Prim)\n"
 		        "   0. Sair\n";
 
 		int opcao = vin::ask<int>("=> ");
@@ -399,8 +400,26 @@ void menu(IGraph& grafo) {
 
 				break;
 			}
-        }
 
+			case 26:
+			{
+				bool choosed = vin::ask<bool>("\nVocê quer escolher a origem [0, 1]?  ");
+				if(choosed) {
+					id_t choose = vin::ask<id_t>("\nQual o id do vértice desejado? ");
+
+					if(grafo.retornarVizinhos(choose).has_value()) {
+						grafo.agm_prim(choosed, choose).printAGM();
+					} else {
+						std::cout << "\nEsse vértice não existe";
+					}
+					
+				} else {
+					grafo.agm_prim(false, 0).printAGM();
+				}
+				break;
+			}
+
+        }
     }
 }
 

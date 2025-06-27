@@ -25,6 +25,7 @@ executable('graphs',
            'dsatur.cpp',
            'noorder.cpp',
            'fordfn.cpp',
+           'agmprim.cpp',
             dependencies: [ncurses_dep]
 )
 

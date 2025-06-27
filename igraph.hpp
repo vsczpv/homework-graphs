@@ -361,6 +361,49 @@ public:
 	weight_t max(void) noexcept;
 };
 
+
+/* Minimum Spanning Tree */
+struct AGMNode {
+	id_t vertice_id;
+	std::vector<AGMNode> filhos;
+	AGMNode(id_t id)
+	: vertice_id(id)
+	, filhos(std::vector<AGMNode>{})
+	 {}
+};
+
+struct AGMEdge {
+  id_t origin;
+  id_t destination;
+  id_t weight;
+  AGMEdge(id_t o, id_t d, id_t w)
+  : origin(o)
+  , destination(d)
+  , weight(w)
+  {}
+};
+
+class AGMPrim {
+private:
+	IGraph&              m_graph;
+	std::vector<AGMEdge> m_solution;
+	std::vector<id_t>    m_control;
+	id_t                 first_vertex;
+	AGMNode              minimum_spanning_tree;
+	bool                 m_choosed;
+	id_t                 m_choose;
+
+
+public:
+	AGMPrim(IGraph& graph, bool choosed, id_t choose);
+	void    recursiveGenerator             (id_t vertex, AGMNode& current_node);
+	bool    isInSolution                   (AGMEdge edge);
+	void    chooseEdge                     (AGMEdge edg, AGMNode& current_nodee);
+	void    printAGM                       ();
+	//bool    sortVertexByNumberOfNeighbours (id_t a, id_t b);
+	//bool    sortAGMEdgesIterators          (std::vector<AGMEdge>::iterator a, std::vector<AGMEdge>::iterator b);
+};
+
 /* IGraph */
 
 class IGraph {
@@ -418,6 +461,10 @@ public:
 
 	NoOrder noorder() noexcept {
 		return NoOrder(*this);
+	}
+
+	AGMPrim agm_prim(bool choosed, id_t choose) noexcept {
+		return AGMPrim(*this, choosed, choose);
 	}
 
 	virtual IGraph* duplicate(void ) const noexcept = 0;
