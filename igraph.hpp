@@ -355,7 +355,7 @@ private:
 public:
 	FordFn(IGraph& original, id_t F, id_t S) noexcept;
 
-	std::optional<weight_t> process_path(id_t curr) noexcept;
+	std::optional<weight_t> process_path(id_t curr, weight_t cw) noexcept;
 
 	bool    step(void) noexcept;
 	weight_t max(void) noexcept;
@@ -404,6 +404,32 @@ public:
 	//bool    sortAGMEdgesIterators          (std::vector<AGMEdge>::iterator a, std::vector<AGMEdge>::iterator b);
 };
 
+class Optimizer {
+private:
+	std::unique_ptr<IGraph> m_graph;
+	std::vector<std::tuple<id_t, id_t, weight_t>> m_edges;
+
+public:
+	Optimizer(IGraph& graph) noexcept;
+	IGraph* optimize(id_t F, id_t S) noexcept;
+};
+
+class Krustal {
+private:
+	IGraph& m_graph;
+
+	std::vector<std::tuple<id_t, id_t, weight_t>> m_S;
+	std::deque <std::tuple<id_t, id_t, weight_t>> m_Q;
+	std::vector<std::unordered_set<id_t>>         m_F;
+
+public:
+	Krustal(IGraph& parent) noexcept;
+
+	void solve(void) noexcept;
+	void print(void) noexcept;
+
+};
+
 /* IGraph */
 
 class IGraph {
@@ -426,6 +452,27 @@ public:
 
 	virtual std::optional<std::vector<id_t>>
 	                   retornarVizinhos(id_t idx)                   noexcept = 0;
+
+	std::vector<std::tuple<id_t, id_t, weight_t>> getArestas(void) noexcept {
+		auto res = std::vector<std::tuple<id_t, id_t, weight_t>> {};
+
+		std::unordered_set<id_t> seenv;
+		auto verts = this->getVertices();
+
+		for (auto v : verts) {
+			auto nei = *this->retornarVizinhos(v);
+			if (this->dir() == false)
+				seenv.insert(v);
+			for (auto n : nei) {
+				if (this->dir() == false)
+					if (seenv.contains(n))
+						continue;
+				res.push_back(std::make_tuple(v, n, *this->pesoAresta(v, n)));
+			}
+		}
+
+		return res;
+	}
 
 	virtual void imprimeGrafo(void) noexcept = 0;
 
@@ -465,6 +512,10 @@ public:
 
 	AGMPrim agm_prim(bool choosed, id_t choose) noexcept {
 		return AGMPrim(*this, choosed, choose);
+	}
+
+	Krustal kruskal() noexcept {
+		return Krustal(*this);
 	}
 
 	virtual IGraph* duplicate(void ) const noexcept = 0;

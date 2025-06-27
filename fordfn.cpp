@@ -7,7 +7,7 @@ FordFn::FordFn(IGraph& original, id_t F, id_t S) noexcept
 	, m_S(S)
 {}
 
-std::optional<weight_t> FordFn::process_path(id_t curr) noexcept
+std::optional<weight_t> FordFn::process_path(id_t curr, weight_t cw) noexcept
 {
 
 	m_visited.insert(curr);
@@ -15,7 +15,9 @@ std::optional<weight_t> FordFn::process_path(id_t curr) noexcept
 	auto nei = m_residual->retornarVizinhos(curr);
 
 	if (!nei || nei->size() == 0)
+	{
 		return std::nullopt;
+	}
 
 	for (auto n : *nei) {
 		std::optional<weight_t> res = std::nullopt;
@@ -23,24 +25,25 @@ std::optional<weight_t> FordFn::process_path(id_t curr) noexcept
 			if (n == m_S)
 			{
 				m_visited.insert(n);
-				res = *m_residual->pesoAresta(curr, n);
+				auto dres = *m_residual->pesoAresta(curr, n);
+				res = dres < cw ? dres : cw;
 			}
 			else
 			{
-				auto deep = FordFn::process_path(n);
+				auto wei  = *m_residual->pesoAresta(curr, n);
+				     wei  = wei < cw ? wei : cw;
+
+				auto deep = FordFn::process_path(n, wei);
 
 				if (!deep)
 					continue;
 
-				auto wei  = m_residual->pesoAresta(curr, n);
-				auto smal = *deep < *wei ? *deep : *wei;
+				auto smal = *deep < wei ? *deep : wei;
 
 				res = smal;
 			}
 		}
 
-
-		// BUG: A subtração é feita antes de se saber qual é o menor valor
 		if (res)
 		{
 			auto cp = *m_residual->pesoAresta(curr, n);
@@ -65,16 +68,16 @@ std::optional<weight_t> FordFn::process_path(id_t curr) noexcept
 bool FordFn::step(void) noexcept
 {
 
-	std::deque <id_t> path = { m_F };
+//	std::deque <id_t> path = { m_F };
 
-	view_path(*m_residual, m_F, path);
-
-	int pause;
-	std::cin >> pause;
+//	view_path(*m_residual, m_F, path);
+//
+//	int pause;
+//	std::cin >> pause;
 
 	m_visited.clear();
 
-	auto pmax = FordFn::process_path(m_F);
+	auto pmax = FordFn::process_path(m_F, (float) INT64_MAX);
 
 	if (!pmax)
 		return true;

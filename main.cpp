@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 
+#define VIN_HPP_IMPL
 #include "vin.hpp"
 
 #include "igraph.hpp"
@@ -130,6 +131,9 @@ void menu(IGraph& grafo) {
 				"  20. Visualizar Coloração DSATUR\n"
 				"  21. Visualizar Coloração Sem Ordem\n"
 				"  22. Fluxo Máximo (Fork-Fukerson)\n"
+				"  23. Imprimir Arestas\n"
+				"  24. Otimizar Fluxo Máximo\n"
+				"  25. AGM Kruskal\n"
 				"  26. Arvore Geradora Mínima (Prim)\n"
 		        "   0. Sair\n";
 
@@ -400,7 +404,42 @@ void menu(IGraph& grafo) {
 
 				break;
 			}
+			case 23:
+			{
+				auto ars = grafo.getArestas();
 
+				for (auto a : ars) {
+					std::cout << std::get<0>(a) << " -> " << std::get<1>(a) << ": " << std::get<2>(a) << std::endl;
+				}
+
+				std::cout << "total: " << ars.size() << std::endl;
+
+				break;
+			}
+			case 24:
+			{
+
+				id_t F = vin::ask<id_t>("\nVertice Fonte: ");
+				id_t S = vin::ask<id_t>("\nVertice Sorvedor: ");
+
+				auto bg = Optimizer(grafo).optimize(F, S);
+
+				std::cout << "Melhor Fluxo: " << FordFn(*bg, F, S).max() << std::endl;
+
+//				std::deque <id_t> path = { F };
+//
+//				view_path(*bg, F, path);
+
+				delete bg;
+
+				break;
+			}
+			case 25:
+			{
+				auto kr = grafo.kruskal();
+				kr.solve();
+				break;
+			}
 			case 26:
 			{
 				bool choosed = vin::ask<bool>("\nVocê quer escolher a origem [0, 1]?  ");
@@ -418,7 +457,6 @@ void menu(IGraph& grafo) {
 				}
 				break;
 			}
-
         }
     }
 }

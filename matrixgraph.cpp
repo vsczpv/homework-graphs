@@ -160,7 +160,7 @@ IGraph* MatrixGraph::duplicate(void) const noexcept {
 	copy->m_stg.max    = this->m_stg.max;
 	copy->m_stg.labels = this->m_stg.labels;
 
-	memcpy(copy->m_stg.M, this->m_stg.M, MATRIX_MAX * MATRIX_MAX);
+	memcpy(copy->m_stg.M, this->m_stg.M, sizeof (weight_t) * MATRIX_MAX * MATRIX_MAX);
 
 	return copy;
 }

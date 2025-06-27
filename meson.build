@@ -26,6 +26,8 @@ executable('graphs',
            'noorder.cpp',
            'fordfn.cpp',
            'agmprim.cpp',
+           'optimizer.cpp',
+           'krustal.cpp',
             dependencies: [ncurses_dep]
 )
 
