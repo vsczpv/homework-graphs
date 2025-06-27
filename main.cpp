@@ -133,7 +133,7 @@ void menu(IGraph& grafo) {
 				"  22. Fluxo Máximo (Fork-Fukerson)\n"
 				"  23. Imprimir Arestas\n"
 				"  24. Otimizar Fluxo Máximo\n"
-				"  25. AGM Kruskal\n"
+				"  25. Arvore Geradora Mínima (Kruskal)\n"
 				"  26. Arvore Geradora Mínima (Prim)\n"
 		        "   0. Sair\n";
 
